@@ -1,0 +1,18 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}تسجيل الخروج{% endblock %}
+
+
+{% block content %}
+<h4>تسجيل الخروج</h4>
+
+<p>متأكد من تسجيل الخروج؟</p>
+
+<form method="post" action="{% url 'account_logout' %}">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <button class="btn btn-danger" type="submit">تسجيل خروج</button>
+</form>
+
+{% endblock content %}

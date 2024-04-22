@@ -1,0 +1,81 @@
+{% extends '_base.html' %}
+
+{% block title %}Manage Requests{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>إدارة طلبات المستخدمين</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>المنتج</th>
+                <th>الكمية</th>
+                <th>المستخدم</th>
+                <th>البريد الالكتروني</th>
+                <th>الاجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests %}
+            <!-- Modal -->
+            <div class="modal fade" id="viewRequestModal{{ req.id }}" tabindex="-1"
+                aria-labelledby="viewRequestModalLabel{{ req.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="viewRequestModalLabel{{ req.id }}">تفاصيل الطلب</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>المنتج:</strong> {{ req.product.الاسم }}</p>
+                                    <p><strong>الفئة:</strong> {{ req.product.get_الفئة_display }}</p>
+                                    <p><strong>الصناعة:</strong> {{ req.product.الصناعة }}</p>
+                                    <p><strong>الموديل:</strong> {{ req.product.الموديل }}</p>
+                                    <p><strong>الرقم المتسلسل:</strong> {{ req.product.الرقم_المتسلسل }}</p>
+                                    <p><strong>الوصف:</strong> {{ req.product.الوصف }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    {% if req.product.الصورة %}
+                                    <img src="{{ req.product.الصورة.url }}" class="img-fluid rounded product-image"
+                                        alt="{{ req.product.الاسم }}">
+                                    {% else %}
+                                    <p>No image available</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <hr>
+                            <p><strong>المستخدم:</strong> {{ req.user.first_name }} {{ req.user.last_name }}</p>
+                            <p><strong>البريد الالكتروني:</strong> {{ req.user.email }}</p>
+                            <p><strong>تاريخ الطلب:</strong> {{ req.request_date|date:"Y-m-d" }}</p>
+                            <p><strong>الحالة:</strong> {{ req.get_status_display }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <tr>
+                <td>{{ req.product.الاسم }}</td>
+                <td>{{ req.quantity }}</td>
+                <td>{{ req.user.first_name }} {{ req.user.last_name }}</td>
+                <td>{{ req.user.email }}</td>
+                <td>
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="request_id" value="{{ req.id }}">
+                        <button type="submit" name="action" value="accept" class="btn btn-success">قبول</button>
+                        <button type="submit" name="action" value="deny" class="btn btn-danger">رفض</button>
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                            data-bs-target="#viewRequestModal{{ req.id }}">عرض الطلب</button>
+
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

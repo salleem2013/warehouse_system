@@ -1,0 +1,132 @@
+{% extends '_base.html' %}
+
+{% block title %}الطلبيات{% endblock %}
+
+{% block content %}
+<div class="table-responsive">
+    مرحبا بك <b><i>{{ user.first_name }} {{ user.last_name }}</i></b>،
+    من فضلك قم بإرجاع الاجهزة والمعدات التى لم تعد في حاجة اليها.
+    <hr>
+    <h5>الطلبات المقبولة:</h5>
+    {% if user_requests.exists %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>المنتج</th>
+                <th>الكمية</th>
+                <th>تاريخ الطلب</th>
+                <th>الحالة</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in user_requests %}
+            {%if request.status == "accepted" %}
+            <tr>
+                <td>{{ request.product.الاسم }}</td>
+                <td>{{ request.quantity }}</td>
+                <td>{{ request.request_date|date:"Y-m-d" }}</td>
+                <td>مقبول</td>
+                <td>
+                    <form action="{% url 'cancel_request' request.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm"
+                            onclick="return confirm('هل أنت متأكد من أنك تريد إلغاء هذا الطلب؟');">
+                            إرجاع الجهاز
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>لم تقم بأية طلبات بعد.</p>
+    {% endif %}
+</div>
+<br>
+<div class="table-responsive">
+
+    <h5>الطلبات المعلقة:</h5>
+    {% if user_requests %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>المنتج</th>
+                <th>الكمية</th>
+                <th>تاريخ الطلب</th>
+                <th>الحالة</th>
+                <th>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in user_requests %}
+            {%if request.status == "pending" %}
+            <tr>
+                <td>{{ request.product.الاسم }}</td>
+                <td>{{ request.quantity }}</td>
+                <td>{{ request.request_date|date:"Y-m-d" }}</td>
+                <td>قيد الانتظار</td>
+                <td>
+                    <form action="{% url 'cancel_request' request.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('هل أنت متأكد من أنك تريد إلغاء هذا الطلب؟');">
+                            إلغاء الطلب
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>لم تقم بأية طلبات بعد.</p>
+    {% endif %}
+</div>
+<br>
+<div class="table-responsive">
+    <h5>الطلبات المرفوضة:</h5>
+    {% if user_requests %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>المنتج</th>
+                <th>الكمية</th>
+                <th>تاريخ الطلب</th>
+                <th>الحالة</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in user_requests %}
+            {%if request.status == "denied" %}
+            <tr>
+                <td>{{ request.product.الاسم }}</td>
+                <td>{{ request.quantity }}</td>
+                <td>{{ request.request_date|date:"Y-m-d" }}</td>
+                <td>مرفوض</td>
+            </tr>
+            {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>لم تقم بأية طلبات بعد.</p>
+    {% endif %}
+</div>
+<br>
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}تغيير كلمة المرور{% endblock %}
+
+{% block content %}
+مرحبا بك <b><i>{{user.first_name}} {{user.last_name}}</i></b>، يمكنك تعديل المعلومات الشخصية الخاصة بك هنا!
+<br>
+<h4>تغيير كلمة المرور</h4>
+<form method="post" action="{% url 'account_change_password' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="btn btn-success" type="submit">تغيير كلمة المرور</button>
+</form>
+{% endblock content %}
