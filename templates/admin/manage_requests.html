@@ -3,6 +3,59 @@
 {% block title %}Manage Requests{% endblock %}
 
 {% block content %}
+{% for req in requests %}
+<form id="accept-form-{{ req.id }}" method="post" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="request_id" value="{{ req.id }}">
+    <input type="hidden" name="action" value="accept">
+</form>
+<!-- Accept Confirmation Modal -->
+<div class="modal fade" id="acceptModal{{ req.id }}" tabindex="-1" aria-labelledby="acceptModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="acceptModalLabel">تأكيد القبول</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد أنك تريد قبول هذا الطلب؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <!-- Ensure the correct form ID is referenced here -->
+                <button type="button" class="btn btn-success"
+                    onclick="document.getElementById('accept-form-{{ req.id }}').submit();">تأكيد</button>
+            </div>
+        </div>
+    </div>
+</div>
+<form id="deny-form-{{ req.id }}" method="post" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="request_id" value="{{ req.id }}">
+    <input type="hidden" name="action" value="deny">
+</form>
+<!-- Deny Confirmation Modal -->
+<div class="modal fade" id="denyModal{{ req.id }}" tabindex="-1" aria-labelledby="denyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="denyModalLabel">تأكيد الرفض</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد أنك تريد رفض هذا الطلب؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-danger"
+                    onclick="document.getElementById('deny-form-{{ req.id }}').submit();">تأكيد</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 <div class="container">
     <h2>إدارة طلبات المستخدمين</h2>
     <table class="table">
@@ -63,15 +116,22 @@
                 <td>{{ req.user.first_name }} {{ req.user.last_name }}</td>
                 <td>{{ req.user.email }}</td>
                 <td>
-                    <form method="post" class="d-inline">
+                    <form id="accept-form-{{ req.id }}" method="post" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="request_id" value="{{ req.id }}">
-                        <button type="submit" name="action" value="accept" class="btn btn-success">قبول</button>
-                        <button type="submit" name="action" value="deny" class="btn btn-danger">رفض</button>
+                        <button type="button" name="action" value="accept" class="btn btn-success"
+                            data-bs-toggle="modal" data-bs-target="#acceptModal{{ req.id }}">قبول</button>
+                    </form>
+
+                    <form id="deny-form-{{ req.id }}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="request_id" value="{{ req.id }}">
+                        <button type="button" name="action" value="deny" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#denyModal{{ req.id }}">رفض</button>
                         <button type="button" class="btn btn-info" data-bs-toggle="modal"
                             data-bs-target="#viewRequestModal{{ req.id }}">عرض الطلب</button>
-
                     </form>
+
                 </td>
             </tr>
             {% endfor %}

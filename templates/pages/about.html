@@ -3,6 +3,35 @@
 {% block title %}الطلبيات{% endblock %}
 
 {% block content %}
+{% for request in user_requests %}
+<form id="cancel-form-{{ request.id }}" method="post" action="{% url 'cancel_request' request.id %}"
+    style="display:none;">
+    {% csrf_token %}
+    <!-- Any other fields you might need to submit with the form -->
+</form>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal fade" id="cancelModal{{ request.id }}" tabindex="-1" aria-labelledby="cancelModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">تأكيد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-danger"
+                    onclick="document.getElementById('cancel-form-{{ request.id }}').submit();">تأكيد</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 <div class="table-responsive">
     مرحبا بك <b><i>{{ user.first_name }} {{ user.last_name }}</i></b>،
     من فضلك قم بإرجاع الاجهزة والمعدات التى لم تعد في حاجة اليها.
@@ -30,10 +59,8 @@
                 <td>
                     <form action="{% url 'cancel_request' request.id %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-sm"
-                            onclick="return confirm('هل أنت متأكد من أنك تريد إلغاء هذا الطلب؟');">
-                            إرجاع الجهاز
-                        </button>
+                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                            data-bs-target="#cancelModal{{ request.id }}">طلب إرجاع</button>
                     </form>
                 </td>
             </tr>
@@ -75,10 +102,9 @@
                 <td>
                     <form action="{% url 'cancel_request' request.id %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('هل أنت متأكد من أنك تريد إلغاء هذا الطلب؟');">
-                            إلغاء الطلب
-                        </button>
+                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                            data-bs-target="#cancelModal{{ request.id }}">إلغاء الطلب</button>
+                    </form>
                     </form>
                 </td>
             </tr>

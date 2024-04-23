@@ -95,7 +95,7 @@ def cancel_request(request, request_id):
         inventory.save()
         # Delete the request or mark as cancelled
         user_request.delete()  # Or update if you wish to keep record
-        messages.success(request, "تم إلغاء الطلب بنجاح.", extra_tags="alert-success")
+        messages.success(request, "تمت العملية بنجاح.", extra_tags="alert-success")
     except Request.DoesNotExist:
         messages.error(request, "لم يتم العثور على الطلب.", extra_tags="alert-danger")
     except المخزون.DoesNotExist:
@@ -104,15 +104,31 @@ def cancel_request(request, request_id):
     return redirect("about")
 
 
-def home(request):
+from django.core.paginator import Paginator
+from django.shortcuts import render
 
-    products = المنتجات.objects.all().prefetch_related(
-        "المخزون_set"
-    )  # This fetches all products from the database
-    paginator = Paginator(products, 9)  # Show 10 products per page
+
+def home(request):
+    category = request.GET.get("category", None)
+    if category:
+        products = المنتجات.objects.filter(الفئة=category).prefetch_related(
+            "المخزون_set"
+        )
+    else:
+        products = المنتجات.objects.all().prefetch_related("المخزون_set")
+
+    paginator = Paginator(products, 9)  # Adjust number as needed
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    return render(request, "pages/home.html", {"page_obj": page_obj})
+
+    return render(
+        request,
+        "pages/home.html",
+        {
+            "page_obj": page_obj,
+            "current_category": category,  # Pass the current category to the template
+        },
+    )
 
 
 class HomePageView(TemplateView):
