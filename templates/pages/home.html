@@ -18,7 +18,7 @@
   </div>
   {% else %}
 
-  <div class="container">
+  <div style="align-self: center;" class="container">
     <div class="badge bg-info text-white" style="width: 8rem;">
       <h6>حساب المستخدم</h6>
     </div>
@@ -54,6 +54,20 @@
       </div>
     </div>
   </div>
+
+  <!-- Category Filter Links -->
+  <div class="container mt-2 mb-4">
+    <a href="{% url 'home' %}" class="btn btn-outline-primary {% if not current_category %}active{% endif %}">الكل</a>
+    <a href="{% url 'home' %}?category=accessory"
+      class="btn btn-outline-danger {% if current_category == 'accessory' %}active{% endif %}">ملحقات</a>
+    <a href="{% url 'home' %}?category=laptop"
+      class="btn btn-outline-info {% if current_category == 'laptop' %}active{% endif %}">لابتوبات</a>
+    <a href="{% url 'home' %}?category=desktop"
+      class="btn btn-outline-warning {% if current_category == 'desktop' %}active{% endif %}">كمبيوترات مكتبية</a>
+    <a href="{% url 'home' %}?category=server"
+      class="btn btn-outline-success {% if current_category == 'server' %}active{% endif %}">سيرفرات</a>
+  </div>
+
 
   <br>
   <div class="container">
@@ -127,22 +141,26 @@
       <ul class="pagination">
         <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
           <a class="page-link"
-            href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% else %}#{% endif %}"
-            tabindex="-1" aria-disabled="{% if not page_obj.has_previous %}true{% endif %}">{% trans "السابق" %}</a>
+            href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}"
+            tabindex="-1" aria-disabled="{% if not page_obj.has_previous %}true{% endif %}">
+            {% trans "السابق" %}
+          </a>
         </li>
         {% for num in page_obj.paginator.page_range %}
         <li class="page-item {% if page_obj.number == num %}active{% endif %}"
           aria-current="{% if page_obj.number == num %}page{% endif %}">
-          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          <a class="page-link"
+            href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}">{{ num }}</a>
         </li>
         {% endfor %}
         <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
           <a class="page-link"
-            href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% else %}#{% endif %}">
-            {% trans "التالي" %}</a>
+            href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}">
+            {% trans "التالي" %}
+          </a>
         </li>
       </ul>
     </nav>
   </div>
-</body>
-{% endblock content %}
+
+  {% endblock content %}
