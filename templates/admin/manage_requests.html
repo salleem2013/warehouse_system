@@ -22,9 +22,9 @@
                 هل أنت متأكد أنك تريد قبول هذا الطلب؟
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
                 <!-- Ensure the correct form ID is referenced here -->
-                <button type="button" class="btn btn-success"
+                <button type="button" class="btn btn-outline-success"
                     onclick="document.getElementById('accept-form-{{ req.id }}').submit();">تأكيد</button>
             </div>
         </div>
@@ -47,8 +47,8 @@
                 هل أنت متأكد أنك تريد رفض هذا الطلب؟
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                <button type="button" class="btn btn-danger"
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-outline-danger"
                     onclick="document.getElementById('deny-form-{{ req.id }}').submit();">تأكيد</button>
             </div>
         </div>
@@ -105,7 +105,8 @@
                             <p><strong>الحالة:</strong> {{ req.get_status_display }}</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal">إغلاق</button>
                         </div>
                     </div>
                 </div>
@@ -119,16 +120,16 @@
                     <form id="accept-form-{{ req.id }}" method="post" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="request_id" value="{{ req.id }}">
-                        <button type="button" name="action" value="accept" class="btn btn-success"
+                        <button type="button" name="action" value="accept" class="btn btn-outline-success"
                             data-bs-toggle="modal" data-bs-target="#acceptModal{{ req.id }}">قبول</button>
                     </form>
 
                     <form id="deny-form-{{ req.id }}" method="post" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="request_id" value="{{ req.id }}">
-                        <button type="button" name="action" value="deny" class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#denyModal{{ req.id }}">رفض</button>
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                        <button type="button" name="action" value="deny" class="btn btn-outline-danger"
+                            data-bs-toggle="modal" data-bs-target="#denyModal{{ req.id }}">رفض</button>
+                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
                             data-bs-target="#viewRequestModal{{ req.id }}">عرض الطلب</button>
                     </form>
 

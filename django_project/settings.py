@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+BS_ICONS_CACHE = os.path.join("/media/icons", "icon_cache")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
@@ -33,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     # Third-party
+    "django_bootstrap_icons",
     "allauth",
     "allauth.account",
     "crispy_forms",

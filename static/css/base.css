@@ -88,3 +88,15 @@ body {
 .form-control {
   text-align: right; /* Adjust this based on your inspection findings */
 }
+
+.bi-accepted{
+  color: greenyellow;
+}
+
+.bi-waiting{
+  color: orange;
+}
+
+.bi-denied{
+  color: red;
+}

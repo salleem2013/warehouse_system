@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
-
 {% block title %}الطلبيات{% endblock %}
+{% load bootstrap_icons %}
 
 {% block content %}
 {% for request in user_requests %}
@@ -23,8 +23,8 @@
                 هل أنت متأكد؟
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                <button type="button" class="btn btn-danger"
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-outline-danger"
                     onclick="document.getElementById('cancel-form-{{ request.id }}').submit();">تأكيد</button>
             </div>
         </div>
@@ -36,7 +36,8 @@
     مرحبا بك <b><i>{{ user.first_name }} {{ user.last_name }}</i></b>،
     من فضلك قم بإرجاع الاجهزة والمعدات التى لم تعد في حاجة اليها.
     <hr>
-    <h5>الطلبات المقبولة:</h5>
+
+    <h5>{% bs_icon 'check-circle-fill' extra_classes="bi-accepted" %} <u>الطلبات المقبولة</u></h5>
     {% if user_requests.exists %}
     <table class="table">
         <thead>
@@ -59,7 +60,7 @@
                 <td>
                     <form action="{% url 'cancel_request' request.id %}" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
                             data-bs-target="#cancelModal{{ request.id }}">طلب إرجاع</button>
                     </form>
                 </td>
@@ -79,7 +80,7 @@
 <br>
 <div class="table-responsive">
 
-    <h5>الطلبات المعلقة:</h5>
+    <h5>{% bs_icon 'hourglass-split' extra_classes="bi-waiting" %} <u>الطلبات المعلقة</u></h5>
     {% if user_requests %}
     <table class="table">
         <thead>
@@ -102,7 +103,7 @@
                 <td>
                     <form action="{% url 'cancel_request' request.id %}" method="post">
                         {% csrf_token %}
-                        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                             data-bs-target="#cancelModal{{ request.id }}">إلغاء الطلب</button>
                     </form>
                     </form>
@@ -122,7 +123,7 @@
 </div>
 <br>
 <div class="table-responsive">
-    <h5>الطلبات المرفوضة:</h5>
+    <h5>{% bs_icon 'x-circle-fill' extra_classes="bi-denied" %} <u>الطلبات المرفوضة</u></h5>
     {% if user_requests %}
     <table class="table">
         <thead>
