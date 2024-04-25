@@ -117,7 +117,7 @@ def home(request):
     else:
         products = المنتجات.objects.all().prefetch_related("المخزون_set")
 
-    paginator = Paginator(products, 9)  # Adjust number as needed
+    paginator = Paginator(products, 12)  # Adjust number as needed
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
