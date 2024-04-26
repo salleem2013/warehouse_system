@@ -117,19 +117,14 @@
                 <td>{{ req.user.first_name }} {{ req.user.last_name }}</td>
                 <td>{{ req.user.email }}</td>
                 <td>
-                    <form id="accept-form-{{ req.id }}" method="post" class="d-inline">
-                        {% csrf_token %}
-                        <input type="hidden" name="request_id" value="{{ req.id }}">
-                        <button type="button" name="action" value="accept" class="btn btn-outline-success"
-                            data-bs-toggle="modal" data-bs-target="#acceptModal{{ req.id }}">قبول</button>
-                    </form>
-
                     <form id="deny-form-{{ req.id }}" method="post" class="d-inline">
                         {% csrf_token %}
                         <input type="hidden" name="request_id" value="{{ req.id }}">
-                        <button type="button" name="action" value="deny" class="btn btn-outline-danger"
-                            data-bs-toggle="modal" data-bs-target="#denyModal{{ req.id }}">رفض</button>
-                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                        <button type="button" name="action" value="accept" class="btn btn-success"
+                            data-bs-toggle="modal" data-bs-target="#acceptModal{{ req.id }}">قبول</button>
+                        <button type="button" name="action" value="deny" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#denyModal{{ req.id }}">رفض</button>
+                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
                             data-bs-target="#viewRequestModal{{ req.id }}">عرض الطلب</button>
                     </form>
 
