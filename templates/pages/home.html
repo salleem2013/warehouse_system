@@ -14,15 +14,16 @@
     مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>،قم بالاطلاع على مخزون الاجهزة والمعدات
     {% endblocktrans %}
   </div>
+  <hr>
   {% else %}
 
   <div class="container">
     <h5 class="text-success">حساب المستخدم</h5>
+    {% blocktrans with first_name=user.first_name last_name=user.last_name %}
+    مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بطلب ما تحتاجه من معدات
+    {% endblocktrans %}
   </div>
-  {% blocktrans with first_name=user.first_name last_name=user.last_name %}
-  مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بطلب ما تحتاجه من معدات
-  {% endblocktrans %}
-  </div>
+  <hr>
   {% endif %}
   <!-- 
   Category Legend
