@@ -20,8 +20,8 @@ RUN set -ex && \
 # Copy local project
 COPY . /code/
 
-# Expose port 8000
-EXPOSE 8000
+# Expose port 80
+EXPOSE 80
 
-# Use gunicorn on port 8000
-CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "django_project.wsgi"]
+# Use gunicorn on port 80
+CMD ["gunicorn", "--bind", ":80", "--workers", "2", "django_project.wsgi"]
