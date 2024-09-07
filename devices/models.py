@@ -22,14 +22,23 @@ class المنتجات(models.Model):
 
     def __str__(self):
         return f"{self.الاسم} - {self.الموديل} (الرقم التسلسلي: {self.الرقم_المتسلسل})"
+    
+    class Meta:
+        verbose_name = _("المنتج")
+        verbose_name_plural = _("المنتجات")
+    
 
 
 class المخزون(models.Model):
-    المنتجات = models.ForeignKey(المنتجات, on_delete=models.CASCADE)
-    الكمية = models.IntegerField()
+    المنتجات = models.OneToOneField(المنتجات, on_delete=models.CASCADE)
+    الكمية = models.IntegerField(default=0, null=False)
 
     def __str__(self):
         return f"{self.الكمية} منتح من {self.المنتجات.الاسم} - {self.المنتجات.الموديل}"
+    
+    class Meta:
+        verbose_name = _("مخزون")
+        verbose_name_plural = _("المخزون")
 
 
 class Request(models.Model):

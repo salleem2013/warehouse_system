@@ -5,7 +5,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-BS_ICONS_CACHE = os.path.join("/media/icons", "icon_cache")
+BS_ICONS_CACHE = BASE_DIR / "media/icons"
+# os.path.join("/media/icons", "icon_cache")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
@@ -19,12 +20,14 @@ SECRET_KEY = "django-insecure-0peo@#x9jur3!h$ryje!$879xww8y1y66jx!%*#ymhg&jkozs2
 DEBUG = True
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "192.168.8.10", "192.168.8.109"]
+ALLOWED_HOSTS = ["*", "0.0.0.0", "127.0.0.1", "192.168.8.10", "192.168.8.109"]
 
 
 # Application definition
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = [
+    # 'admin_material.apps.AdminMaterialDashboardConfig',
+    # "unfold",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -32,7 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
-    "django.contrib.sites",
+    # "django.contrib.sites",
     # Third-party
     "django_bootstrap_icons",
     "allauth",

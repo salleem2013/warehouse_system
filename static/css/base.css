@@ -5,6 +5,7 @@ html {
   min-height: 100%;
   font-size: 14px;
 }
+
 @media (min-width: 768px) {
   html {
     font-size: 14px;
@@ -12,7 +13,8 @@ html {
 }
 
 body {
-  margin-bottom: 80px; /* Margin bottom by footer height */
+  margin-bottom: 80px;
+  /* Margin bottom by footer height */
 }
 
 .container {
@@ -27,26 +29,33 @@ body {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 65px; /* Set the fixed height of the footer here */
-  line-height: 25px; /* Vertically center the text there */
+  height: 65px;
+  /* Set the fixed height of the footer here */
+  line-height: 25px;
+  /* Vertically center the text there */
   background-color: #f5f5f5;
 }
 
 .card-accessory {
-  background-color: #efebe9; /* Light Red */
+  background-color: #efebe9;
+  /* Light Red */
 }
 
 .card-laptop {
-  background-color: #d1e6f0; /* Light Blue */
+  background-color: #d1e6f0;
+  /* Light Blue */
 }
 
 .card-desktop {
-  background-color: #eaecd8; /* Light Purple */
+  background-color: #eaecd8;
+  /* Light Purple */
 }
 
 .card-server {
-  background-color: #c9f2d8; /* Light Green */
+  background-color: #c9f2d8;
+  /* Light Green */
 }
+
 .swatch {
   display: inline-block;
   width: 20px;
@@ -55,57 +64,150 @@ body {
 }
 
 .badge {
-  font-size: 1em; /* Adjust font size as needed */
+  font-size: 1em;
+  /* Adjust font size as needed */
 }
 
 .bg-success {
-  background-color: #28a745; /* Bootstrap default success color, change if needed */
+  background-color: #28a745;
+  /* Bootstrap default success color, change if needed */
 }
 
 .bg-danger {
-  background-color: #dc3545; /* Bootstrap default danger color, change if needed */
+  background-color: #dc3545;
+  /* Bootstrap default danger color, change if needed */
 }
 
 .card-img-top {
-  width: 100%;          /* Image will take up the full width of the card */
-  height: 150px;        /* Fixed height for consistency */
-  object-fit: contain;  /* Ensures the entire image fits within the dimensions without cropping */
-  object-position: center; /* Center the image within the element */
+  width: 100%;
+  /* Image will take up the full width of the card */
+  height: 150px;
+  /* Fixed height for consistency */
+  object-fit: contain;
+  /* Ensures the entire image fits within the dimensions without cropping */
+  object-position: center;
+  /* Center the image within the element */
 }
 
 .navbar-nav .nav-link.active {
   font-weight: bold;
-  border-bottom: 2px solid #007bff; /* Bootstrap primary color */
+  border-bottom: 2px solid #007bff;
+  /* Bootstrap primary color */
 }
 
 .product-image {
-  width: 100%;        /* Make the image take full width of its container */
-  height: 300px;      /* Fixed height */
-  object-fit: contain; /* Ensures the whole image fits within the dimensions without cropping */
-  background-color: #f8f9fa; /* Background color for images with transparency or smaller than container */
+  width: 100%;
+  /* Make the image take full width of its container */
+  height: 300px;
+  /* Fixed height */
+  object-fit: contain;
+  /* Ensures the whole image fits within the dimensions without cropping */
+  background-color: #f8f9fa;
+  /* Background color for images with transparency or smaller than container */
 }
 
 .form-control {
-  text-align: right; /* Adjust this based on your inspection findings */
+  text-align: right;
+  /* Adjust this based on your inspection findings */
 }
 
-.bi-accepted{
+.bi-accepted {
   color: greenyellow;
 }
 
-.bi-waiting{
+.bi-waiting {
   color: orange;
 }
 
-.bi-denied{
+.bi-denied {
   color: red;
 }
 
 .btn-info {
   background-color: #aedae1;
-  border-color:#00ddff(167, 228, 237)
+  border-color: #00ddff(167, 228, 237)
 }
 
 .btn i {
-  margin-right: 5px; /* Adds spacing between the icon and the text */
+  margin-right: 5px;
+  /* Adds spacing between the icon and the text */
+}
+
+
+
+/* CSS */
+.button-19 {
+  appearance: button;
+  background-color: #7680e0;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: din-round, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  line-height: 20px;
+  margin: 0;
+  outline: none;
+  overflow: visible;
+  padding: 13px 16px;
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: filter .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.button-19:after {
+  background-clip: padding-box;
+  background-color: #08328d;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button-19:main,
+.button-19:focus {
+  user-select: auto;
+}
+
+.button-19:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button-19:disabled {
+  cursor: auto;
+}
+
+.button-19:active {
+  border-width: 4px 0 0;
+  background: none;
+}
+
+
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #e6e6e6;
+  color: #004f83;
 }

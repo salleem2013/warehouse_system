@@ -6,156 +6,124 @@
 
 {% block content %}
 
-<body>
+<!-- Search Bar -->
+<form method="GET" action="{% url 'home' %}">
+  <div class="input-group mb-4">
+    <input type="text" class="form-control" name="q" placeholder="{% trans 'ابحث عن المنتجات...' %}" value="{{ request.GET.q }}">
+    <button class="btn btn-info" type="submit">{% trans 'بحث' %}</button>
+  </div>
+</form>
+
+<!-- Admin/User Greetings -->
+<div class="container my-4">
   {% if user.is_superuser %}
-  <div class="container">
+  <div class="alert alert-success" role="alert">
+    <h5 class="text-success">{% trans "حساب إداري" %}</h5>
     {% blocktrans with first_name=user.first_name last_name=user.last_name %}
-    <h5 class="text-success">حساب إداري</h5>
-    مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>،قم بالاطلاع على مخزون الاجهزة والمعدات
+    مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بالاطلاع على مخزون الاجهزة والمعدات
     {% endblocktrans %}
   </div>
-  <hr>
   {% else %}
-
-  <div class="container">
-    <h5 class="text-success">حساب المستخدم</h5>
+  <div class="alert alert-info" role="alert">
+    <h5 class="text-primary">{% trans "حساب المستخدم" %}</h5>
     {% blocktrans with first_name=user.first_name last_name=user.last_name %}
     مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بطلب ما تحتاجه من معدات
     {% endblocktrans %}
   </div>
-  <hr>
   {% endif %}
-  <!-- 
-  Category Legend
-  <div class="container mt-4">
-    <h5>{% trans "ألوان فئات المنتجات:" %}</h5>
-    <div class="row">
-      <div class="col-auto"><span class="badge bg-light text-dark p-2">
-          <h6>ملحقات</h6>
-        </span>
-        <div class="swatch card-accessory"></div>
-      </div>
-      <div class="col-auto"><span class="badge bg-light text-dark p-2">
-          <h6>لابتوبات</h6>
-        </span>
-        <div class="swatch card-laptop"></div>
-      </div>
-      <div class="col-auto"><span class="badge bg-light text-dark p-2">
-          <h6>كمبيوترات مكتبية</h6>
-        </span>
-        <div class="swatch card-desktop"></div>
-      </div>
-      <div class="col-auto"><span class="badge bg-light text-dark p-2">
-          <h6>سيرفرات</h6>
-        </span>
-        <div class="swatch card-server"></div>
-      </div>
-    </div>
-  </div> -->
+</div>
 
-  <!-- Category Filter Links -->
-  <div class="container mt-2 mb-4">
-    <a href="{% url 'home' %}" class="btn btn-outline-dark {% if not current_category %}active{% endif %}">الكل</a>
-    <a href="{% url 'home' %}?category=accessory"
-      class="btn btn-outline-dark {% if current_category == 'accessory' %}active{% endif %}">ملحقات</a>
-    <a href="{% url 'home' %}?category=laptop"
-      class="btn btn-outline-dark {% if current_category == 'laptop' %}active{% endif %}">لابتوبات</a>
-    <a href="{% url 'home' %}?category=desktop"
-      class="btn btn-outline-dark {% if current_category == 'desktop' %}active{% endif %}">كمبيوترات مكتبية</a>
-    <a href="{% url 'home' %}?category=server"
-      class="btn btn-outline-dark {% if current_category == 'server' %}active{% endif %}">سيرفرات</a>
+<!-- Category Filter Links -->
+<div class="container mb-4 text-center">
+  <div class="nav" aria-label="Category filter">
+    <a href="{% url 'home' %}" class="btn btn {% if not current_category %}active{% endif %}">{% trans "الكل" %}</a>
+    <a href="{% url 'home' %}?category=accessory" class="btn btn {% if current_category == 'accessory' %}active{% endif %}">{% trans "ملحقات" %}</a>
+    <a href="{% url 'home' %}?category=laptop" class="btn btn {% if current_category == 'laptop' %}active{% endif %}">{% trans "لابتوبات" %}</a>
+    <a href="{% url 'home' %}?category=desktop" class="btn btn {% if current_category == 'desktop' %}active{% endif %}">{% trans "كمبيوترات مكتبية" %}</a>
+    <a href="{% url 'home' %}?category=server" class="btn btn {% if current_category == 'server' %}active{% endif %}">{% trans "سيرفرات" %}</a>
   </div>
+</div>
 
-
-  <br>
-  <div class="container">
-    <div class="row">
-      {% for product in page_obj %}
-      <div class="col-md-3 mb-4">
-        <div class="card h-100 shadow p-3 mb-5 bg-white rounded">
-          <div class="card-body d-flex flex-column">
-            {% if product.الصورة %}
-            <img src="{{ product.الصورة.url }}" class="card-img-top" alt="{{ product.الاسم }}">
-            {% endif %}
-            <h5 class="card-title">{{ product.الاسم }} - {{ product.الصناعة }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{% trans "الموديل" %}: {{ product.الموديل }}</h6>
-            <p class="card-text mb-auto">{{ product.الوصف }}</p>
-            {% with product.المخزون_set.first as stock %}
-            {% if stock and stock.الكمية > 0 %}
-            <span class="badge bg-light text-success">{% trans "متوفر" %}: {{ stock.الكمية }}</span>
+<!-- Product List -->
+<div class="container">
+  <div class="list-group">
+    {% for product in page_obj %}
+    <div class="list-group-item d-flex align-items-center justify-content-between p-3">
+      <div class="d-flex align-items-center">
+        <div style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+          <img src="{{ product.الصورة.url }}" alt="{{ product.الاسم }}" class="img-fluid" style="object-fit: contain; width: 100%; height: 100%;">
+        </div>
+        <div class="ms-3">
+          <h5 class="mb-1">{{ product.الاسم }} - {{ product.الصناعة }}</h5>
+          <h6 class="text-muted">{% trans "الموديل" %}: {{ product.الموديل }}</h6>
+          <p class="mb-2 text-muted">{{ product.الوصف|truncatewords:20 }}</p>
+          <span class="badge {% if product.المخزون_set.first and product.المخزون_set.first.الكمية > 0 %} bg-success {% else %} bg-danger {% endif %}">
+            {% if product.المخزون_set.first and product.المخزون_set.first.الكمية > 0 %}
+            {% trans "متوفر" %}: {{ product.المخزون_set.first.الكمية }}
             {% else %}
-            <span class="badge bg-light text-dark">{% trans "غير متوفر" %}</span>
+            {% trans "غير متوفر" %}
             {% endif %}
-            {% if not user.is_superuser and stock and stock.الكمية > 0 %} <button type="button"
-              class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#requestModal{{ product.id }}">
-              {% trans "طلب" %}<i class="bi bi-box-seam"></i>
-            </button>
-            {% endif %}
-            {% endwith %}
-          </div>
+          </span>
         </div>
       </div>
-      <!-- Modal -->
-      <div class="modal fade" id="requestModal{{ product.id }}" tabindex="-1"
-        aria-labelledby="requestModalLabel{{ product.id }}" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="requestModalLabel{{ product.id }}">طلب المنتج</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{% url 'submit_request' %}" method="post">
-              {% csrf_token %}
-              <div class="modal-body">
-                <input type="hidden" name="product_id" value="{{ product.id }}">
-                <label for="quantity{{ product.id }}" class="form-label">الكمية:</label>
-                <input type="number" class="form-label text-center" id="typeNumber{{ product.id }}" name="quantity"
-                  min="1" value="1">
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-success">تأكيد الطلب</button>
-              </div>
-            </form>
-          </div>
-        </div>
+      <div>
+        <button type="button" class="button-19" data-bs-toggle="modal" data-bs-target="#requestModal{{ product.id }}">
+          {% trans "طلب" %} <i class="bi bi-cart-plus"></i>
+        </button>
       </div>
-      {% empty %}
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">لا توجد أجهزة متاحة</h5>
-          <p class="card-text">قم بالعودة لاحقاً</p>
-        </div>
-      </div>
-      {% endfor %}
     </div>
-  </div>
 
-  <!-- Pagination -->
-  <div class="container mt-4">
-    <nav aria-label="Page navigation">
-      <ul class="pagination">
-        <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-          <a class="page-link"
-            href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}"
-            tabindex="-1" aria-disabled="{% if not page_obj.has_previous %}true{% endif %}">
-            {% trans "السابق" %}
-          </a>
-        </li>
-        {% for num in page_obj.paginator.page_range %}
-        <li class="page-item {% if page_obj.number == num %}active{% endif %}"
-          aria-current="{% if page_obj.number == num %}page{% endif %}">
-          <a class="page-link"
-            href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}">{{ num }}</a>
-        </li>
-        {% endfor %}
-        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-          <a class="page-link"
-            href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}">
-            {% trans "التالي" %}
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <!-- Request Modal -->
+    <div class="modal fade" id="requestModal{{ product.id }}" tabindex="-1" aria-labelledby="requestModalLabel{{ product.id }}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="requestModalLabel{{ product.id }}">{% trans "طلب المنتج" %}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'submit_request' %}" method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+              <input type="hidden" name="product_id" value="{{ product.id }}">
+              <label for="quantity{{ product.id }}" class="form-label">{% trans "الكمية" %}:</label>
+              <input type="number" class="form-control text-center" id="typeNumber{{ product.id }}" name="quantity" min="1" value="1">
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-outline-success">{% trans "تأكيد الطلب" %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-warning text-center" role="alert">
+      {% trans "لا توجد أجهزة متاحة" %}. {% trans "قم بالعودة لاحقاً" %}.
+    </div>
+    {% endfor %}
   </div>
+</div>
 
-  {% endblock content %}
+<!-- Pagination -->
+<div class="container mt-4">
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+        <a class="page-link" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}">
+          {% trans "السابق" %}
+        </a>
+      </li>
+      {% for num in page_obj.paginator.page_range %}
+      <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}">{{ num }}</a>
+      </li>
+      {% endfor %}
+      <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}">
+          {% trans "التالي" %}
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+{% endblock content %}

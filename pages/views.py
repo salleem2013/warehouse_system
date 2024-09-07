@@ -149,3 +149,35 @@ class AboutPageView(TemplateView):
 
 class ProfilePageView(TemplateView):
     template_name = "pages/profile.html"
+
+from django.db.models import Q
+
+def home(request):
+    category = request.GET.get("category", None)
+    query = request.GET.get("q", None)  # Get the search query
+    
+    # Filter products based on category or search query
+    products = المنتجات.objects.all()
+    
+    if category:
+        products = products.filter(الفئة=category)
+    
+    if query:
+        # Use Q objects to search across multiple fields (name, description, model)
+        products = products.filter(
+            Q(الاسم__icontains=query) | Q(الوصف__icontains=query) | Q(الموديل__icontains=query)
+        )
+
+    paginator = Paginator(products, 12)  # Adjust number as needed
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "pages/home.html",
+        {
+            "page_obj": page_obj,
+            "current_category": category,  # Pass the current category to the template
+            "search_query": query,  # Pass the search query back to the template
+        },
+    )

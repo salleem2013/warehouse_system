@@ -3,157 +3,180 @@
 {% load bootstrap_icons %}
 
 {% block content %}
-{% for request in user_requests %}
-<form id="cancel-form-{{ request.id }}" method="post" action="{% url 'cancel_request' request.id %}"
-    style="display:none;">
-    {% csrf_token %}
-    <!-- Any other fields you might need to submit with the form -->
-</form>
+
+<div class="container my-4">
+  <h2>الطلبيات</h2>
+  <p class="lead">مرحبا بك <b>{{ user.first_name }} {{ user.last_name }}</b>، قم بمراجعة طلباتك السابقة وطلب إرجاع المنتجات التي لم تعد بحاجة إليها.</p>
+  <hr>
+
+  <div class="accordion" id="ordersAccordion">
+    <!-- Accepted Orders Section -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="acceptedHeading">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acceptedOrders" aria-expanded="true" aria-controls="acceptedOrders">
+          <i class="bi bi-check-circle-fill me-2 text-success"></i> الطلبات المقبولة
+        </button>
+      </h2>
+      <div id="acceptedOrders" class="accordion-collapse collapse show" aria-labelledby="acceptedHeading" data-bs-parent="#ordersAccordion">
+        <div class="accordion-body">
+          {% if user_requests.exists %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>المنتج</th>
+                  <th>الكمية</th>
+                  <th>تاريخ الطلب</th>
+                  <th>الحالة</th>
+                  <th>إجراء</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for request in user_requests %}
+                {% if request.status == "accepted" %}
+                <tr>
+                  <td>{{ request.product.الاسم }}</td>
+                  <td>{{ request.quantity }}</td>
+                  <td>{{ request.request_date|date:"Y-m-d" }}</td>
+                  <td><span class="badge bg-success">مقبول</span></td>
+                  <td>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">طلب إرجاع</button>
+                  </td>
+                </tr>
+                {% endif %}
+                {% empty %}
+                <tr>
+                  <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>لم تقم بأية طلبات بعد.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Orders Section -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="pendingHeading">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pendingOrders" aria-expanded="false" aria-controls="pendingOrders">
+          <i class="bi bi-hourglass-split me-2 text-warning"></i> الطلبات المعلقة
+        </button>
+      </h2>
+      <div id="pendingOrders" class="accordion-collapse collapse" aria-labelledby="pendingHeading" data-bs-parent="#ordersAccordion">
+        <div class="accordion-body">
+          {% if user_requests %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>المنتج</th>
+                  <th>الكمية</th>
+                  <th>تاريخ الطلب</th>
+                  <th>الحالة</th>
+                  <th>إجراء</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for request in user_requests %}
+                {% if request.status == "pending" %}
+                <tr>
+                  <td>{{ request.product.الاسم }}</td>
+                  <td>{{ request.quantity }}</td>
+                  <td>{{ request.request_date|date:"Y-m-d" }}</td>
+                  <td><span class="badge bg-warning">قيد الانتظار</span></td>
+                  <td>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">إلغاء الطلب</button>
+                  </td>
+                </tr>
+                {% endif %}
+                {% empty %}
+                <tr>
+                  <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>لم تقم بأية طلبات بعد.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Denied Orders Section -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="deniedHeading">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#deniedOrders" aria-expanded="false" aria-controls="deniedOrders">
+          <i class="bi bi-x-circle-fill me-2 text-danger"></i> الطلبات المرفوضة
+        </button>
+      </h2>
+      <div id="deniedOrders" class="accordion-collapse collapse" aria-labelledby="deniedHeading" data-bs-parent="#ordersAccordion">
+        <div class="accordion-body">
+          {% if user_requests %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>المنتج</th>
+                  <th>الكمية</th>
+                  <th>تاريخ الطلب</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for request in user_requests %}
+                {% if request.status == "denied" %}
+                <tr>
+                  <td>{{ request.product.الاسم }}</td>
+                  <td>{{ request.quantity }}</td>
+                  <td>{{ request.request_date|date:"Y-m-d" }}</td>
+                  <td><span class="badge bg-danger">مرفوض</span></td>
+                </tr>
+                {% endif %}
+                {% empty %}
+                <tr>
+                  <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>لم تقم بأية طلبات بعد.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Cancel Confirmation Modal -->
-<div class="modal fade" id="cancelModal{{ request.id }}" tabindex="-1" aria-labelledby="cancelModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelModalLabel">تأكيد</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                هل أنت متأكد؟
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-                <button type="button" class="btn btn-outline-danger"
-                    onclick="document.getElementById('cancel-form-{{ request.id }}').submit();">تأكيد</button>
-            </div>
-        </div>
+{% for request in user_requests %}
+<div class="modal fade" id="cancelModal{{ request.id }}" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">تأكيد إلغاء الطلب</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        هل أنت متأكد أنك تريد إلغاء هذا الطلب؟
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <form id="cancel-form-{{ request.id }}" method="post" action="{% url 'cancel_request' request.id %}" style="display:none;">
+          {% csrf_token %}
+        </form>
+        <button type="button" class="btn btn-danger" onclick="document.getElementById('cancel-form-{{ request.id }}').submit();">تأكيد</button>
+      </div>
     </div>
+  </div>
 </div>
 {% endfor %}
 
-<div class="table-responsive">
-    مرحبا بك <b><i>{{ user.first_name }} {{ user.last_name }}</i></b>،
-    من فضلك قم بإرجاع الاجهزة والمعدات التى لم تعد في حاجة اليها.
-    <hr>
-
-    <h5>{% bs_icon 'check-circle-fill' extra_classes="bi-accepted" %} <u>الطلبات المقبولة</u></h5>
-    {% if user_requests.exists %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>المنتج</th>
-                <th>الكمية</th>
-                <th>تاريخ الطلب</th>
-                <th>الحالة</th>
-                <th>إجراء</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for request in user_requests %}
-            {%if request.status == "accepted" %}
-            <tr>
-                <td>{{ request.product.الاسم }}</td>
-                <td>{{ request.quantity }}</td>
-                <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                <td>مقبول</td>
-                <td>
-                    <form action="{% url 'cancel_request' request.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                            data-bs-target="#cancelModal{{ request.id }}">طلب إرجاع</button>
-                    </form>
-                </td>
-            </tr>
-            {% endif %}
-            {% empty %}
-            <tr>
-                <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>لم تقم بأية طلبات بعد.</p>
-    {% endif %}
-</div>
-<br>
-<div class="table-responsive">
-
-    <h5>{% bs_icon 'hourglass-split' extra_classes="bi-waiting" %} <u>الطلبات المعلقة</u></h5>
-    {% if user_requests %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>المنتج</th>
-                <th>الكمية</th>
-                <th>تاريخ الطلب</th>
-                <th>الحالة</th>
-                <th>إجراء</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for request in user_requests %}
-            {%if request.status == "pending" %}
-            <tr>
-                <td>{{ request.product.الاسم }}</td>
-                <td>{{ request.quantity }}</td>
-                <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                <td>قيد الانتظار</td>
-                <td>
-                    <form action="{% url 'cancel_request' request.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#cancelModal{{ request.id }}">إلغاء الطلب</button>
-                    </form>
-                    </form>
-                </td>
-            </tr>
-            {% endif %}
-            {% empty %}
-            <tr>
-                <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>لم تقم بأية طلبات بعد.</p>
-    {% endif %}
-</div>
-<br>
-<div class="table-responsive">
-    <h5>{% bs_icon 'x-circle-fill' extra_classes="bi-denied" %} <u>الطلبات المرفوضة</u></h5>
-    {% if user_requests %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>المنتج</th>
-                <th>الكمية</th>
-                <th>تاريخ الطلب</th>
-                <th>الحالة</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for request in user_requests %}
-            {%if request.status == "denied" %}
-            <tr>
-                <td>{{ request.product.الاسم }}</td>
-                <td>{{ request.quantity }}</td>
-                <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                <td>مرفوض</td>
-            </tr>
-            {% endif %}
-            {% empty %}
-            <tr>
-                <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>لم تقم بأية طلبات بعد.</p>
-    {% endif %}
-</div>
-<br>
 {% endblock content %}
