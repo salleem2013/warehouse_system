@@ -49,13 +49,17 @@
           <h5 class="mb-1">{{ product.الاسم }} - {{ product.الصناعة }}</h5>
           <h6 class="text-muted">{% trans "الموديل" %}: {{ product.الموديل }}</h6>
           <p class="mb-2 text-muted">{{ product.الوصف|truncatewords:20 }}</p>
-          <span class="badge {% if product.المخزون_set.first and product.المخزون_set.first.الكمية > 0 %} bg-success {% else %} bg-danger {% endif %}">
-            {% if product.المخزون_set.first and product.المخزون_set.first.الكمية > 0 %}
-            {% trans "متوفر" %}: {{ product.المخزون_set.first.الكمية }}
-            {% else %}
-            {% trans "غير متوفر" %}
-            {% endif %}
+          
+          <!-- Use One-to-One relation directly -->
+          {% if product.المخزون and product.المخزون.الكمية > 0 %}
+          <span class="badge bg-success">
+            {% trans "متوفر" %}: {{ product.المخزون.الكمية }}
           </span>
+          {% else %}
+          <span class="badge bg-danger">
+            {% trans "غير متوفر" %}
+          </span>
+          {% endif %}
         </div>
       </div>
       <div>
