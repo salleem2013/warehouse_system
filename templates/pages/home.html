@@ -6,14 +6,6 @@
 
 {% block content %}
 
-<!-- Search Bar -->
-<form method="GET" action="{% url 'home' %}">
-  <div class="input-group mb-4">
-    <input type="text" class="form-control" name="q" placeholder="{% trans 'ابحث عن المنتجات...' %}" value="{{ request.GET.q }}">
-    <button class="btn btn-info" type="submit">{% trans 'بحث' %}</button>
-  </div>
-</form>
-
 <!-- Admin/User Greetings -->
 <div class="container my-4">
   {% if user.is_superuser %}
