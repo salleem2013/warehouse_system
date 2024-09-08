@@ -391,3 +391,23 @@ body {
 .dropdown-menu a:hover {
   background-color: #6c757d;
 }
+
+/* Custom styles for the login form */
+
+.card {
+  border-radius: 10px;
+  background-color: #495057;
+  color: #FFFFFF;
+  padding: 20px;
+}
+
+.btn-success {
+  font-size: 1.1rem;
+  padding: 10px;
+}
+
+a.text-decoration-none:hover {
+  color: #ffffff;
+  /* Match the button color */
+  text-decoration: underline;
+}
