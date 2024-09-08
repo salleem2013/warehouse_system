@@ -38,9 +38,9 @@
                   <td>{{ request.product.الاسم }}</td>
                   <td>{{ request.quantity }}</td>
                   <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                  <td><span class="badge bg-success">مقبول</span></td>
+                  <td><span class="badge rounded-pill bg-secondary px-3 py-2 text-white">مقبول</span></td>
                   <td>
-                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">طلب إرجاع</button>
+                    <a href="#" class="custom-link text-success" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">طلب إرجاع</a>
                   </td>
                 </tr>
                 {% endif %}
@@ -87,9 +87,9 @@
                   <td>{{ request.product.الاسم }}</td>
                   <td>{{ request.quantity }}</td>
                   <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                  <td><span class="badge bg-warning">قيد الانتظار</span></td>
+                  <td><span class="badge rounded-pill bg-warning px-3 py-2 text-dark">قيد الانتظار</span></td>
                   <td>
-                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">إلغاء الطلب</button>
+                    <a href="#" class="custom-link text-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">إلغاء الطلب</a>
                   </td>
                 </tr>
                 {% endif %}
@@ -135,7 +135,7 @@
                   <td>{{ request.product.الاسم }}</td>
                   <td>{{ request.quantity }}</td>
                   <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                  <td><span class="badge bg-danger">مرفوض</span></td>
+                  <td><span class="badge rounded-pill bg-danger px-3 py-2 text-white">مرفوض</span></td>
                 </tr>
                 {% endif %}
                 {% empty %}
@@ -180,3 +180,4 @@
 {% endfor %}
 
 {% endblock content %}
+

@@ -133,6 +133,21 @@ body {
   /* Adds spacing between the icon and the text */
 }
 
+.custom-link {
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+  color: #007bff;
+}
+
+.badge {
+  font-size: 0.9em;
+  padding: 0.5em 1em;
+}
 
 
 /* CSS */

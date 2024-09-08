@@ -32,7 +32,7 @@
       </form>
     </div>
     <div class="header-links">
-      <a href="#"><i class="bi bi-house-door"></i> الصفحة الرئيسية</a>
+      {% comment %} <a href="#"><i class="bi bi-house-door"></i> الصفحة الرئيسية</a> {% endcomment %}
       {% if user.is_authenticated %}
       <a href="#"><i class="bi bi-person-circle"></i> ملفك الشخصي</a>
       {% else %}
@@ -40,6 +40,28 @@
       {% endif %}
     </div>
   </header>
+
+  <!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">تأكيد تسجيل الخروج</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>هل أنت متأكد أنك تريد تسجيل الخروج؟</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <form method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">تأكيد تسجيل الخروج</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Sidebar -->
   <nav class="sidebar" id="sidebar">
@@ -49,13 +71,42 @@
         <h3 class="mt-2">المستودع</h3>
       </a>
     </div> {% endcomment %}
-    <hr style="margin-top: 10em;" class="text-white">
+    <!-- Admin/User Greetings -->
+    
+    <div class="container my-4">
+      {% if user.is_superuser %}
+      <hr style="margin-top: 10em;" class="text-white">
+        <h3 style="font-size:20px" class="mt-2 text-info">{% trans "حساب إداري" %}</h3>
+        {% blocktrans with first_name=user.first_name last_name=user.last_name %}
+        <h3 style="font-size:16px" class="mt-2">
+          مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بالاطلاع على مخزون الاجهزة والمعدات
+        </h3>
+        {% endblocktrans %}
+      {% else %}
+      {% if user.is_authenticated  and not user.is_superuser%}
+      <hr style="margin-top: 10em;" class="text-white">
+        <h3 style="font-size:20px" class="mt-2 text-success">{% trans "حساب المستخدم" %}</h3>
+        {% blocktrans with first_name=user.first_name last_name=user.last_name %}
+        <h3 style="font-size:16px" class="mt-2">
+          مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بطلب ما تحتاجه من معدات
+        </h3>
+        {% endblocktrans %}
+      {% endif %}
+      {% endif %}
+    </div>
+    {% if not user.is_authenticated %}
+    <hr style="margin-top: 5em;" class="text-white">
+    {% else %}
+    <hr class="text-white">
+    {% endif %}
     <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active-link{% endif %}">
       <i class="bi bi-house-door"></i> <span>{% trans 'الاجهزة والملحقات' %}</span>
     </a>
+    {% if user.is_authenticated  and not user.is_superuser%}
     <a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active-link{% endif %}">
       <i class="bi bi-box-seam"></i> <span>{% trans 'الطلبيات' %}</span>
     </a>
+    {% endif %}
     {% if user.is_superuser %}
     <a href="{% url 'manage_requests' %}" class="{% if request.resolver_match.url_name == 'manage_requests' %}active-link{% endif %}">
       <i class="bi bi-tools"></i> <span>{% trans 'إدارة الطلبات' %}</span>
@@ -70,7 +121,9 @@
       <li><a class="dropdown-item" href="#">{{ user.email }}</a></li>
       <li><a class="dropdown-item" href="{% url 'account_change_password' %}">
           {% trans 'تغيير كلمة المرور' %}</a></li>
-      <li><a class="dropdown-item" href="{% url 'account_logout' %}">{% trans 'تسجيل الخروج' %}</a></li>
+      <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        {% trans 'تسجيل خروج' %}
+      </a></li>
     </ul>
     {% else %}
     <a style="margin-bottom: 5em;" href="{% url 'account_login' %}" class="btn btn-outline-light mt-auto mx-3">{% trans 'تسجيل الدخول' %}</a>

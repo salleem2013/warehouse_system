@@ -1,78 +1,26 @@
 {% extends '_base.html' %}
 
-{% block title %}Manage Requests{% endblock %}
+{% block title %}إدارة الطلبات{% endblock %}
 
 {% block content %}
-{% for req in requests %}
-<form id="accept-form-{{ req.id }}" method="post" style="display:none;">
-    {% csrf_token %}
-    <input type="hidden" name="request_id" value="{{ req.id }}">
-    <input type="hidden" name="action" value="accept">
-</form>
-<!-- Accept Confirmation Modal -->
-<div class="modal fade" id="acceptModal{{ req.id }}" tabindex="-1" aria-labelledby="acceptModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="acceptModalLabel">تأكيد القبول</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                هل أنت متأكد أنك تريد قبول هذا الطلب؟
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-                <!-- Ensure the correct form ID is referenced here -->
-                <button type="button" class="btn btn-outline-success"
-                    onclick="document.getElementById('accept-form-{{ req.id }}').submit();">تأكيد</button>
-            </div>
-        </div>
-    </div>
-</div>
-<form id="deny-form-{{ req.id }}" method="post" style="display:none;">
-    {% csrf_token %}
-    <input type="hidden" name="request_id" value="{{ req.id }}">
-    <input type="hidden" name="action" value="deny">
-</form>
-<!-- Deny Confirmation Modal -->
-<div class="modal fade" id="denyModal{{ req.id }}" tabindex="-1" aria-labelledby="denyModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="denyModalLabel">تأكيد الرفض</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                هل أنت متأكد أنك تريد رفض هذا الطلب؟
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-                <button type="button" class="btn btn-outline-danger"
-                    onclick="document.getElementById('deny-form-{{ req.id }}').submit();">تأكيد</button>
-            </div>
-        </div>
-    </div>
-</div>
-{% endfor %}
-
 <div class="container">
-    <h2>إدارة طلبات المستخدمين</h2>
-    <table class="table">
-        <thead>
+    <h3 class="my-4">إدارة طلبات المستخدمين</h3>
+
+    {% if requests %}
+    <table class="table table-hover table-responsive-md">
+        <thead class="table-light">
             <tr>
                 <th>المنتج</th>
                 <th>الكمية</th>
                 <th>المستخدم</th>
                 <th>البريد الالكتروني</th>
-                <th>الاجراء</th>
+                <th>الإجراء</th>
             </tr>
         </thead>
         <tbody>
             {% for req in requests %}
-            <!-- Modal -->
-            <div class="modal fade" id="viewRequestModal{{ req.id }}" tabindex="-1"
-                aria-labelledby="viewRequestModalLabel{{ req.id }}" aria-hidden="true">
+            <!-- Request details modal -->
+            <div class="modal fade" id="viewRequestModal{{ req.id }}" tabindex="-1" aria-labelledby="viewRequestModalLabel{{ req.id }}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -91,10 +39,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     {% if req.product.الصورة %}
-                                    <img src="{{ req.product.الصورة.url }}" class="img-fluid rounded product-image"
-                                        alt="{{ req.product.الاسم }}">
+                                    <img src="{{ req.product.الصورة.url }}" class="img-fluid rounded product-image" alt="{{ req.product.الاسم }}">
                                     {% else %}
-                                    <p>No image available</p>
+                                    <p>لا توجد صورة متاحة</p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -105,33 +52,99 @@
                             <p><strong>الحالة:</strong> {{ req.get_status_display }}</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary"
-                                data-bs-dismiss="modal">إغلاق</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إغلاق</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Accept Confirmation Modal -->
+            <div class="modal fade" id="acceptModal{{ req.id }}" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="acceptModalLabel">تأكيد القبول</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            هل أنت متأكد أنك تريد قبول هذا الطلب؟
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="button" class="btn btn-success" onclick="document.getElementById('accept-form-{{ req.id }}').submit();">تأكيد القبول</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deny Confirmation Modal -->
+            <div class="modal fade" id="denyModal{{ req.id }}" tabindex="-1" aria-labelledby="denyModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="denyModalLabel">تأكيد الرفض</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            هل أنت متأكد أنك تريد رفض هذا الطلب؟
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="button" class="btn btn-danger" onclick="document.getElementById('deny-form-{{ req.id }}').submit();">تأكيد الرفض</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <tr>
                 <td>{{ req.product.الاسم }}</td>
                 <td>{{ req.quantity }}</td>
                 <td>{{ req.user.first_name }} {{ req.user.last_name }}</td>
                 <td>{{ req.user.email }}</td>
                 <td>
-                    <form id="deny-form-{{ req.id }}" method="post" class="d-inline">
-                        {% csrf_token %}
-                        <input type="hidden" name="request_id" value="{{ req.id }}">
-                        <button type="button" name="action" value="accept" class="btn btn-success"
-                            data-bs-toggle="modal" data-bs-target="#acceptModal{{ req.id }}">قبول</button>
-                        <button type="button" name="action" value="deny" class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#denyModal{{ req.id }}">رفض</button>
-                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                            data-bs-target="#viewRequestModal{{ req.id }}">عرض الطلب</button>
-                    </form>
-
+                    <a href="#" class="text-primary me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#viewRequestModal{{ req.id }}">
+                        عرض
+                    </a> | 
+                    <a href="#" class="text-success me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#acceptModal{{ req.id }}">
+                        قبول
+                    </a> | 
+                    <a href="#" class="text-danger fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#denyModal{{ req.id }}">
+                        رفض
+                    </a>
                 </td>
             </tr>
+
+            <form id="accept-form-{{ req.id }}" method="post" style="display:none;">
+                {% csrf_token %}
+                <input type="hidden" name="request_id" value="{{ req.id }}">
+                <input type="hidden" name="action" value="accept">
+            </form>
+
+            <form id="deny-form-{{ req.id }}" method="post" style="display:none;">
+                {% csrf_token %}
+                <input type="hidden" name="request_id" value="{{ req.id }}">
+                <input type="hidden" name="action" value="deny">
+            </form>
+
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        لا توجد طلبات لعرضها في الوقت الحالي.
+    </div>
+    {% endif %}
 </div>
+
+<!-- Custom Styles for Links -->
+<style>
+    .link-no-underline {
+        text-decoration: none;
+    }
+
+    .link-no-underline:hover {
+        text-decoration: underline;
+    }
+</style>
+
 {% endblock %}

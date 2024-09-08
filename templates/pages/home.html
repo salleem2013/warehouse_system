@@ -6,24 +6,7 @@
 
 {% block content %}
 
-<!-- Admin/User Greetings -->
-<div class="container my-4">
-  {% if user.is_superuser %}
-  <div class="alert alert-success" role="alert">
-    <h5 class="text-success">{% trans "حساب إداري" %}</h5>
-    {% blocktrans with first_name=user.first_name last_name=user.last_name %}
-    مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بالاطلاع على مخزون الاجهزة والمعدات
-    {% endblocktrans %}
-  </div>
-  {% else %}
-  <div class="alert alert-info" role="alert">
-    <h5 class="text-primary">{% trans "حساب المستخدم" %}</h5>
-    {% blocktrans with first_name=user.first_name last_name=user.last_name %}
-    مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بطلب ما تحتاجه من معدات
-    {% endblocktrans %}
-  </div>
-  {% endif %}
-</div>
+
 
 <!-- Category Filter Links -->
 <div class="container mb-4 text-center">
@@ -62,11 +45,13 @@
           {% endif %}
         </div>
       </div>
+      {% if user.is_authenticated  and not user.is_superuser%}
       <div>
         <button type="button" class="button-19" data-bs-toggle="modal" data-bs-target="#requestModal{{ product.id }}">
           {% trans "طلب" %} <i class="bi bi-cart-plus"></i>
         </button>
       </div>
+      {% endif %}
     </div>
 
     <!-- Request Modal -->
