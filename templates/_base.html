@@ -16,133 +16,126 @@
 </head>
 
 <body>
-
-  <!-- Header -->
-  <header class="header">
-    <div class="header-logo">
-      <a href="{% url 'home' %}">
-        <img src="{% static 'images/logo.png' %}" alt="Logo" class="rounded-circle">
-      </a>
-      <h3>المستودع</h3>
-    </div>
-    <!-- Search Bar -->
-    <div class="search-bar">
-      <form method="GET" action="{% url 'home' %}">
-        <input type="text" class="form-control" name="q" placeholder="ابحث عن المنتجات..." value="{{ request.GET.q }}">
-      </form>
-    </div>
-    <div class="header-links">
-      {% comment %} <a href="#"><i class="bi bi-house-door"></i> الصفحة الرئيسية</a> {% endcomment %}
-      {% if user.is_authenticated %}
-      <a href="#"><i class="bi bi-person-circle"></i> ملفك الشخصي</a>
-      {% else %}
-      <a href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> تسجيل الدخول</a>
-      {% endif %}
-    </div>
-  </header>
-
-  <!-- Logout Confirmation Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="logoutModalLabel">تأكيد تسجيل الخروج</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+{% if user.is_authenticated %}
+    <!-- Header -->
+    <header class="header">
+      <div class="header-logo">
+        <a href="{% url 'home' %}">
+          <img src="{% static 'images/logo.png' %}" alt="Logo" class="rounded-circle logo-img">
+        </a>
+        <h3 class="logo-text">المستودع</h3>
       </div>
-      <div class="modal-body">
-        <p>هل أنت متأكد أنك تريد تسجيل الخروج؟</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-        <form method="post" action="{% url 'account_logout' %}">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">تأكيد تسجيل الخروج</button>
+    
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <form method="GET" action="{% url 'home' %}" class="d-flex">
+          <input type="text" class="form-control me-2" name="q" placeholder="ابحث عن المنتجات..." value="{{ search_query|default:'' }}">
+          {% if current_category %}
+            <input type="hidden" name="category" value="{{ current_category }}">
+          {% endif %}
+          <button class="btn btn-light" type="submit">بحث</button>
         </form>
       </div>
-    </div>
-  </div>
-</div>
-
-  <!-- Sidebar -->
-  <nav class="sidebar" id="sidebar">
-    {% comment %} <div style="margin-top: 5em;" class="text-center mb-4">
-      <a href="{% url 'home' %}">
-        <img src="{% static 'images/logo.png' %}" alt="Logo" width="200" height="120" class="rounded-circle">
-        <h3 class="mt-2">المستودع</h3>
-      </a>
-    </div> {% endcomment %}
-    <!-- Admin/User Greetings -->
     
-    <div class="container my-4">
-      {% if user.is_superuser %}
-      <hr style="margin-top: 10em;" class="text-white">
-        <h3 style="font-size:20px" class="mt-2 text-info">{% trans "حساب إداري" %}</h3>
-        {% blocktrans with first_name=user.first_name last_name=user.last_name %}
-        <h3 style="font-size:16px" class="mt-2">
-          مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بالاطلاع على مخزون الاجهزة والمعدات
-        </h3>
-        {% endblocktrans %}
-      {% else %}
-      {% if user.is_authenticated  and not user.is_superuser%}
-      <hr style="margin-top: 10em;" class="text-white">
-        <h3 style="font-size:20px" class="mt-2 text-success">{% trans "حساب المستخدم" %}</h3>
-        {% blocktrans with first_name=user.first_name last_name=user.last_name %}
-        <h3 style="font-size:16px" class="mt-2">
-          مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بطلب ما تحتاجه من معدات
-        </h3>
-        {% endblocktrans %}
-      {% endif %}
-      {% endif %}
+      <div class="header-links">
+        <a href="{% url 'profile' %}" class="header-link"><i class="bi bi-person-circle"></i> ملفك الشخصي</a> 
+      </div>
+    </header>
+
+      <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="logoutModalLabel">تأكيد تسجيل الخروج</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>هل أنت متأكد أنك تريد تسجيل الخروج؟</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+            <form method="post" action="{% url 'account_logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">تسجيل الخروج</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-    {% if not user.is_authenticated %}
-    <hr style="margin-top: 5em;" class="text-white">
-    {% else %}
-    <hr class="text-white">
-    {% endif %}
-    <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active-link{% endif %}">
-      <i class="bi bi-house-door"></i> <span>{% trans 'الاجهزة والملحقات' %}</span>
-    </a>
-    {% if user.is_authenticated  and not user.is_superuser%}
-    <a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active-link{% endif %}">
-      <i class="bi bi-box-seam"></i> <span>{% trans 'الطلبيات' %}</span>
-    </a>
-    {% endif %}
-    {% if user.is_superuser %}
-    <a href="{% url 'manage_requests' %}" class="{% if request.resolver_match.url_name == 'manage_requests' %}active-link{% endif %}">
-      <i class="bi bi-tools"></i> <span>{% trans 'إدارة الطلبات' %}</span>
-    </a>
-    {% endif %}
-    <hr class="text-white">
-    {% if user.is_authenticated %}
-    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-      <i class="bi bi-gear"></i> <span>{% trans 'الضبط' %}</span>
-    </a>
-    <ul class="dropdown-menu">
-      <li><a class="dropdown-item" href="#">{{ user.email }}</a></li>
-      <li><a class="dropdown-item" href="{% url 'account_change_password' %}">
-          {% trans 'تغيير كلمة المرور' %}</a></li>
-      <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
-        {% trans 'تسجيل خروج' %}
-      </a></li>
-    </ul>
-    {% else %}
-    <a style="margin-bottom: 5em;" href="{% url 'account_login' %}" class="btn btn-outline-success mt-auto mx-3">{% trans 'تسجيل الدخول' %}</a>
-    {% endif %}
 
-    <!-- Sidebar Toggle Button at the Bottom -->
-    <button class="sidebar-toggle" onclick="toggleSidebar()">
-      <i class="bi bi-list"></i>
-    </button>
-  </nav>
+      <!-- Sidebar -->
+      <nav class="sidebar" id="sidebar">
+        <div style="margin-top: 2em;" class="text-center mb-4">
+          <a href="{% url 'home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" width="100" height="100" class="rounded-circle mx-auto d-block">
+          </a>
+        </div> 
+        <!-- Admin/User Greetings -->
+        
+        <div class="container my-4">
+          {% if user.is_superuser %}
+          <hr style="margin-top: 1em;" class="text-white">
+            <h3 style="font-size:20px" class="mt-2 text-info">{% trans "حساب إداري" %}</h3>
+            {% blocktrans with first_name=user.first_name last_name=user.last_name %}
+            <h3 style="font-size:16px" class="mt-2">
+              مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بالاطلاع على مخزون الاجهزة والمعدات
+            </h3>
+            {% endblocktrans %}
+          {% else %}
+          {% if user.is_authenticated  and not user.is_superuser%}
+          <hr style="margin-top: 1em;" class="text-white">
+            <h3 style="font-size:20px" class="mt-2 text-success">{% trans "حساب المستخدم" %}</h3>
+            {% blocktrans with first_name=user.first_name last_name=user.last_name %}
+            <h3 style="font-size:16px" class="mt-2">
+              مرحبا بك <b><i>{{ first_name }} {{ last_name }}</i></b>، قم بطلب ما تحتاجه من معدات
+            </h3>
+            {% endblocktrans %}
+          {% endif %}
+          {% endif %}
+        </div>
 
+
+        <hr class="text-white">
+
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active-link{% endif %}">
+          <i class="bi bi-house-door"></i> <span>{% trans 'الاجهزة والملحقات' %}</span>
+        </a>
+        {% if user.is_authenticated  and not user.is_superuser%}
+        <a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active-link{% endif %}">
+          <i class="bi bi-box-seam"></i> <span>{% trans 'الطلبيات' %}</span>
+        </a>
+        {% endif %}
+        {% if user.is_superuser %}
+        <a href="{% url 'manage_requests' %}" class="{% if request.resolver_match.url_name == 'manage_requests' %}active-link{% endif %}">
+          <i class="bi bi-tools"></i> <span>{% trans 'إدارة الطلبات' %}</span>
+        </a>
+        {% endif %}
+        <hr class="text-white">
+        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+          <i class="bi bi-gear"></i> <span>{% trans 'الضبط' %}</span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="{% url 'profile' %}">{{ user.email }}</a></li>
+          <li><a class="dropdown-item" href="{% url 'account_change_password' %}">
+              {% trans 'تغيير كلمة المرور' %}</a></li>
+          <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
+            {% trans 'تسجيل خروج' %}
+          </a></li>
+        </ul>
+        
+
+        
+      </nav>
+{% endif %}
   <!-- Main Content Area -->
   <div class="content">
     {% if messages %}
     <div class="container">
       {% for message in messages %}
-      <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+      <div  class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button style="background-color: white;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
       {% endfor %}
     </div>

@@ -6,12 +6,16 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
-
+from django.contrib.auth.decorators import login_required
+from accounts.forms import CustomUserProfileForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from devices.models import (
     المنتجات,
     Request,
     المخزون,
 )  # Importing the Product model from the devices app
+from django.db.models import Q
 
 
 def is_superuser(user):
@@ -104,18 +108,27 @@ def cancel_request(request, request_id):
     return redirect("about")
 
 
-from django.core.paginator import Paginator
-from django.shortcuts import render
-
-
+@login_required(
+    login_url="/accounts/login/"
+)  # Redirect to the login page if not authenticated
 def home(request):
     category = request.GET.get("category", None)
+    query = request.GET.get("q", None)  # Get the search query
+
+    # Filter products based on category or search query
+    products = المنتجات.objects.all()
+
     if category:
-        products = المنتجات.objects.filter(الفئة=category).prefetch_related(
-            "المخزون_set"
+        products = products.filter(الفئة=category)
+
+    if query:
+        # Use Q objects to search across multiple fields (name, description, model)
+        products = products.filter(
+            Q(الاسم__icontains=query)
+            | Q(الوصف__icontains=query)
+            | Q(الموديل__icontains=query)
+            | Q(الصناعة__icontains=query)
         )
-    else:
-        products = المنتجات.objects.all().prefetch_related("المخزون_set")
 
     paginator = Paginator(products, 12)  # Adjust number as needed
     page_number = request.GET.get("page")
@@ -127,6 +140,7 @@ def home(request):
         {
             "page_obj": page_obj,
             "current_category": category,  # Pass the current category to the template
+            "search_query": query,  # Pass the search query back to the template
         },
     )
 
@@ -150,34 +164,39 @@ class AboutPageView(TemplateView):
 class ProfilePageView(TemplateView):
     template_name = "pages/profile.html"
 
-from django.db.models import Q
 
-def home(request):
-    category = request.GET.get("category", None)
-    query = request.GET.get("q", None)  # Get the search query
-    
-    # Filter products based on category or search query
-    products = المنتجات.objects.all()
-    
-    if category:
-        products = products.filter(الفئة=category)
-    
-    if query:
-        # Use Q objects to search across multiple fields (name, description, model)
-        products = products.filter(
-            Q(الاسم__icontains=query) | Q(الوصف__icontains=query) | Q(الموديل__icontains=query)
-        )
+@login_required
+def profile_view(request):
+    if request.method == "POST":
+        # Check if the form being submitted is the profile form or password form
+        if "update_profile" in request.POST:
+            profile_form = CustomUserProfileForm(request.POST, instance=request.user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, "تم تحديث معلوماتك الشخصية بنجاح.")
+                return redirect("profile")
+            else:
+                messages.error(request, "خطأ في تحديث الملف الشخصي.")
 
-    paginator = Paginator(products, 12)  # Adjust number as needed
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+        elif "change_password" in request.POST:
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)  # Keep the user logged in
+                messages.success(request, "تم تغيير كلمة المرور بنجاح.")
+                return redirect("profile")
+            else:
+                messages.error(request, "من فضلك تأكد من صحة البيانات.")
+    else:
+        # GET method: provide both forms for display
+        profile_form = CustomUserProfileForm(instance=request.user)
+        password_form = PasswordChangeForm(request.user)
 
     return render(
         request,
-        "pages/home.html",
+        "pages/profile.html",
         {
-            "page_obj": page_obj,
-            "current_category": category,  # Pass the current category to the template
-            "search_query": query,  # Pass the search query back to the template
+            "profile_form": profile_form,
+            "password_form": password_form,
         },
     )

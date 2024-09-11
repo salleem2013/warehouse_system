@@ -18,18 +18,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for req in requests %}
-            <!-- Request details modal -->
-            <div class="modal fade" id="viewRequestModal{{ req.id }}" tabindex="-1" aria-labelledby="viewRequestModalLabel{{ req.id }}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="viewRequestModalLabel{{ req.id }}">تفاصيل الطلب</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
+        {% for req in requests %}
+
+        <!-- Request details modal -->
+        <div class="modal fade" id="viewRequestModal{{ req.id }}" tabindex="-1" aria-labelledby="viewRequestModalLabel{{ req.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header ">
+                        <h5 class="modal-title" id="viewRequestModalLabel{{ req.id }}">تفاصيل الطلب</h5>
+                        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6 class="text-primary"><strong>معلومات المنتج</strong></h6>
+                                <div class="p-3 border rounded">
                                     <p><strong>المنتج:</strong> {{ req.product.الاسم }}</p>
                                     <p><strong>الفئة:</strong> {{ req.product.get_الفئة_display }}</p>
                                     <p><strong>الصناعة:</strong> {{ req.product.الصناعة }}</p>
@@ -37,26 +40,31 @@
                                     <p><strong>الرقم المتسلسل:</strong> {{ req.product.الرقم_المتسلسل }}</p>
                                     <p><strong>الوصف:</strong> {{ req.product.الوصف }}</p>
                                 </div>
-                                <div class="col-md-6">
-                                    {% if req.product.الصورة %}
-                                    <img src="{{ req.product.الصورة.url }}" class="img-fluid rounded product-image" alt="{{ req.product.الاسم }}">
-                                    {% else %}
-                                    <p>لا توجد صورة متاحة</p>
-                                    {% endif %}
-                                </div>
                             </div>
-                            <hr>
+                            <div class="col-md-6 d-flex justify-content-center align-items-center">
+                                {% if req.product.الصورة %}
+                                <img src="{{ req.product.الصورة.url }}" class="img-fluid rounded border shadow-lg" alt="{{ req.product.الاسم }}" style="max-height: 250px; object-fit: contain;">
+                                {% else %}
+                                <p class="text-muted">لا توجد صورة متاحة</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <hr>
+                        <h6 class="text-primary"><strong>معلومات الطلب</strong></h6>
+                        <div class="p-3 border rounded">
                             <p><strong>المستخدم:</strong> {{ req.user.first_name }} {{ req.user.last_name }}</p>
                             <p><strong>البريد الالكتروني:</strong> {{ req.user.email }}</p>
                             <p><strong>تاريخ الطلب:</strong> {{ req.request_date|date:"Y-m-d" }}</p>
-                            <p><strong>الحالة:</strong> {{ req.get_status_display }}</p>
+                            <p><strong>الحالة:</strong> <span class="badge bg-info">{{ req.get_status_display }}</span></p>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إغلاق</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إغلاق</button>
                     </div>
                 </div>
             </div>
+        </div>
+
 
             <!-- Accept Confirmation Modal -->
             <div class="modal fade" id="acceptModal{{ req.id }}" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">

@@ -1,5 +1,4 @@
 {% extends '_base.html' %}
-{% load crispy_forms_tags %}
 
 {% block title %}الملف الشخصي{% endblock %}
 
@@ -8,24 +7,17 @@
   <div class="card shadow p-4" style="width: 400px;">
     <h4 class="text-center mb-4">الملف الشخصي</h4>
 
-    <!-- Profile Update Form -->
     <form method="POST">
       {% csrf_token %}
-      {{ profile_form|crispy }}
-      <button class="btn btn-primary w-100" name="update_profile" type="submit">تحديث المعلومات الشخصية</button>
+      {{ form|crispy }}
+
+      <button class="btn btn-success w-100" type="submit">تحديث المعلومات</button>
     </form>
-
-    <hr>
-
-    <!-- Password Change Form -->
-    <h4>تغيير كلمة المرور</h4>
-      <a class="btn btn-success w-100" href="{% url 'account_change_password' %}" type="submit">تغيير كلمة المرور</a>
-
 
     {% if messages %}
       <div class="mt-4">
         {% for message in messages %}
-        <div class="alert {{ message.tags }}">{{ message }}</div>
+        <div class="alert alert-success">{{ message }}</div>
         {% endfor %}
       </div>
     {% endif %}
