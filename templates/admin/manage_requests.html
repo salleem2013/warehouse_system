@@ -11,7 +11,9 @@
         <thead class="table-light">
             <tr>
                 <th>المنتج</th>
+                <th>القسم</th>
                 <th>الكمية</th>
+                <th>نوع الطلب</th> <!-- New column for request type -->
                 <th>المستخدم</th>
                 <th>البريد الالكتروني</th>
                 <th>الإجراء</th>
@@ -29,33 +31,48 @@
                         <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row mb-4">
+                        <h6 class="text-primary"><strong>معلومات الطلب</strong></h6>
+                            <div class="row d-flex">
+                            <div class="col-md-6 d-flex">
+                                <div class="p-3 border rounded mb-3 w-100">
+                                    <p><strong>المستخدم:</strong> {{ req.user.first_name }} {{ req.user.last_name }}</p>
+                                    <p><strong>البريد الالكتروني:</strong> {{ req.user.email }}</p>
+                                    <p><strong>تاريخ الطلب:</strong> {{ req.request_date|date:"Y-m-d" }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 d-flex">
+                                <div class="p-3 border rounded mb-3 w-100">
+                                    <p><strong>الحالة:</strong> <span class="badge bg-info">{{ req.get_status_display }}</span></p>
+                                    {% if req.request_type == "new" %}
+                                    <p><strong>نوع الطلب:</strong> <span class="badge bg-primary">جديد</span></p>
+                                    {% else %}
+                                    <p><strong>نوع الطلب:</strong> <span class="badge bg-warning">إرجاع</span></p>
+                                    {% endif %}
+                                    <p><strong>الكمية:</strong> {{ req.quantity }}</p>
+                                </div>
+                            </div>
+                            </div>
+                            <hr>
+                            <div class="row mb-4">
                             <div class="col-md-6">
                                 <h6 class="text-primary"><strong>معلومات المنتج</strong></h6>
                                 <div class="p-3 border rounded">
-                                    <p><strong>المنتج:</strong> {{ req.product.الاسم }}</p>
-                                    <p><strong>الفئة:</strong> {{ req.product.get_الفئة_display }}</p>
-                                    <p><strong>الصناعة:</strong> {{ req.product.الصناعة }}</p>
-                                    <p><strong>الموديل:</strong> {{ req.product.الموديل }}</p>
-                                    <p><strong>الرقم المتسلسل:</strong> {{ req.product.الرقم_المتسلسل }}</p>
-                                    <p><strong>الوصف:</strong> {{ req.product.الوصف }}</p>
+                                    <p><strong>القسم:</strong> {{ req.product.facility }}</p>
+                                    <p><strong>الفئة:</strong> {{ req.product.category }}</p>
+                                    <p><strong>المنتج:</strong> {{ req.product.name }}</p>
+                                    <p><strong>الوصف:</strong> {{ req.product.description }}</p>
+                                    <p><strong>الصناعة:</strong> {{ req.product.manufacturer }}</p>
+                                    <p><strong>الموديل:</strong> {{ req.product.model }}</p>
+                                    <p><strong>الرقم المتسلسل:</strong> {{ req.product.serial_number }}</p>
                                 </div>
                             </div>
                             <div class="col-md-6 d-flex justify-content-center align-items-center">
-                                {% if req.product.الصورة %}
-                                <img src="{{ req.product.الصورة.url }}" class="img-fluid rounded border shadow-lg" alt="{{ req.product.الاسم }}" style="max-height: 250px; object-fit: contain;">
+                                {% if req.product.image %}
+                                <img src="{{ req.product.image.url }}" class="img-fluid rounded border shadow-lg" alt="{{ req.product.name }}" style="max-height: 250px; object-fit: contain;">
                                 {% else %}
                                 <p class="text-muted">لا توجد صورة متاحة</p>
                                 {% endif %}
                             </div>
-                        </div>
-                        <hr>
-                        <h6 class="text-primary"><strong>معلومات الطلب</strong></h6>
-                        <div class="p-3 border rounded">
-                            <p><strong>المستخدم:</strong> {{ req.user.first_name }} {{ req.user.last_name }}</p>
-                            <p><strong>البريد الالكتروني:</strong> {{ req.user.email }}</p>
-                            <p><strong>تاريخ الطلب:</strong> {{ req.request_date|date:"Y-m-d" }}</p>
-                            <p><strong>الحالة:</strong> <span class="badge bg-info">{{ req.get_status_display }}</span></p>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -85,7 +102,8 @@
                 </div>
             </div>
 
-            <!-- Deny Confirmation Modal -->
+            <!-- Deny Confirmation Modal (only for 'new' requests) -->
+            {% if req.request_type == "new" %}
             <div class="modal fade" id="denyModal{{ req.id }}" tabindex="-1" aria-labelledby="denyModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -103,10 +121,20 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
 
             <tr>
-                <td>{{ req.product.الاسم }}</td>
+                <td>({{ req.product.serial_number }}) {{ req.product.name }} {{ req.product.manufacturer }} {{ req.product.model }}</td>
+                <td>{{ req.product.facility }}</td>
                 <td>{{ req.quantity }}</td>
+                <td>
+                    <!-- Show request type: New or Return -->
+                    {% if req.request_type == "new" %}
+                    <span class="badge bg-primary">جديد</span>
+                    {% else %}
+                    <span class="badge bg-warning">إرجاع</span>
+                    {% endif %}
+                </td>
                 <td>{{ req.user.first_name }} {{ req.user.last_name }}</td>
                 <td>{{ req.user.email }}</td>
                 <td>
@@ -115,10 +143,12 @@
                     </a> | 
                     <a href="#" class="text-success me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#acceptModal{{ req.id }}">
                         قبول
-                    </a> | 
-                    <a href="#" class="text-danger fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#denyModal{{ req.id }}">
+                    </a> 
+                    {% if req.request_type == "new" %}
+                    | <a href="#" class="text-danger fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#denyModal{{ req.id }}">
                         رفض
                     </a>
+                    {% endif %}
                 </td>
             </tr>
 
@@ -128,13 +158,14 @@
                 <input type="hidden" name="action" value="accept">
             </form>
 
+            {% if req.request_type == "new" %}
             <form id="deny-form-{{ req.id }}" method="post" style="display:none;">
                 {% csrf_token %}
                 <input type="hidden" name="request_id" value="{{ req.id }}">
                 <input type="hidden" name="action" value="deny">
             </form>
-
-            {% endfor %}
+            {% endif %}
+        {% endfor %}
         </tbody>
     </table>
     {% else %}

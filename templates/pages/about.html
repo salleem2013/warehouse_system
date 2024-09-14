@@ -1,20 +1,22 @@
 {% extends '_base.html' %}
-{% block title %}الطلبيات{% endblock %}
+{% load static i18n %}
+{% block title %}{% trans "طلبات المستخدم" %}{% endblock %}
 {% load bootstrap_icons %}
 
 {% block content %}
 
 <div class="container my-4">
-  <h2>الطلبيات</h2>
-  <p class="lead">مرحبا بك <b>{{ user.first_name }} {{ user.last_name }}</b>، قم بمراجعة طلباتك السابقة وطلب إرجاع المنتجات التي لم تعد بحاجة إليها.</p>
+  <h2>{% trans "الطلبات" %}</h2>
+  <p class="lead">{% trans "مرحبا بك" %} <b>{{ user.first_name }} {{ user.last_name }}</b>، {% trans "قم بمراجعة طلباتك السابقة وطلب إرجاع المنتجات التي لم تعد بحاجة إليها." %}</p>
   <hr>
 
   <div class="accordion" id="ordersAccordion">
+    
     <!-- Accepted Orders Section -->
     <div class="accordion-item">
       <h2 class="accordion-header" id="acceptedHeading">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acceptedOrders" aria-expanded="true" aria-controls="acceptedOrders">
-          <i class="bi bi-check2-square me-2 text-success"></i> الطلبات المقبولة
+          <i class="bi bi-check2-square me-2 text-success"></i> {% trans "الطلبات المقبولة" %}
         </button>
       </h2>
       <div id="acceptedOrders" class="accordion-collapse collapse show" aria-labelledby="acceptedHeading" data-bs-parent="#ordersAccordion">
@@ -24,36 +26,35 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>المنتج</th>
-                  <th>الكمية</th>
-                  <th>تاريخ الطلب</th>
-                  <th>الحالة</th>
-                  <th>إجراء</th>
+                  <th>{% trans "المنتج" %}</th>
+                  <th>{% trans "الكمية" %}</th>
+                  <th>{% trans "تاريخ الطلب" %}</th>
+                  <th>{% trans "الحالة" %}</th>
+                  <th>{% trans "إجراء" %}</th>
                 </tr>
               </thead>
               <tbody>
                 {% for request in user_requests %}
-                {% if request.status == "accepted" %}
+                {% if request.status == "approved" %}
                 <tr>
-                  <td>{{ request.product.الاسم }}</td>
+                  <td>{{ request.product.name }} {{ request.product.manufacturer }} {{ request.product.model }} {{ request.product.serial_number }} </td>
                   <td>{{ request.quantity }}</td>
                   <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                  <td><span class="badge rounded-pill bg-secondary px-3 py-2 text-white">مقبول</span></td>
+                  <td><span class="badge rounded-pill bg-success px-3 py-2 text-white">{% trans "مقبول" %}</span></td>
                   <td>
-                    <a href="#" class="custom-link text-success" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">طلب إرجاع</a>
+                    <a href="#" class="text-primary me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#viewRequestModal{{ request.id }}">
+                      عرض
+                    </a> | 
+                    <a href="#" class="custom-link text-success" data-bs-toggle="modal" data-bs-target="#returnModal{{ request.id }}">{% trans "طلب إرجاع" %}</a>
                   </td>
                 </tr>
                 {% endif %}
-                {% empty %}
-                <tr>
-                  <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
-                </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
           {% else %}
-          <p>لم تقم بأية طلبات بعد.</p>
+          <p>{% trans "لم تقم بأية طلبات بعد." %}</p>
           {% endif %}
         </div>
       </div>
@@ -63,7 +64,7 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="pendingHeading">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pendingOrders" aria-expanded="false" aria-controls="pendingOrders">
-          <i class="bi bi-hourglass-split me-2 text-warning"></i> الطلبات المعلقة
+          <i class="bi bi-hourglass-split me-2 text-warning"></i> {% trans "الطلبات المعلقة" %}
         </button>
       </h2>
       <div id="pendingOrders" class="accordion-collapse collapse" aria-labelledby="pendingHeading" data-bs-parent="#ordersAccordion">
@@ -73,36 +74,50 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>المنتج</th>
-                  <th>الكمية</th>
-                  <th>تاريخ الطلب</th>
-                  <th>الحالة</th>
-                  <th>إجراء</th>
+                  <th>{% trans "المنتج" %}</th>
+                  <th>{% trans "الكمية" %}</th>
+                  <th>{% trans "تاريخ الطلب" %}</th>
+                  <th>{% trans "نوع الطلب" %}</th>
+                  <th>{% trans "الحالة" %}</th>
+                  <th>{% trans "إجراء" %}</th>
                 </tr>
               </thead>
               <tbody>
                 {% for request in user_requests %}
                 {% if request.status == "pending" %}
                 <tr>
-                  <td>{{ request.product.الاسم }}</td>
+                  <td>{{ request.product.name }} {{ request.product.manufacturer }} {{ request.product.model }} {{ request.product.serial_number }} </td>
                   <td>{{ request.quantity }}</td>
                   <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                  <td><span class="badge rounded-pill bg-warning px-3 py-2 text-dark">قيد الانتظار</span></td>
                   <td>
-                    <a href="#" class="custom-link text-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">إلغاء الطلب</a>
+                    {% if request.request_type == 'new' %}
+                      <span class="badge bg-primary">{% trans "طلب جديد" %}</span>
+                    {% elif request.request_type == 'return' %}
+                      <span class="badge bg-info">{% trans "طلب إرجاع" %}</span>
+                    {% endif %}
+                  </td>
+                  <td><span class="badge rounded-pill bg-warning px-3 py-2 text-dark">{% trans "قيد الانتظار" %}</span></td>
+                  <td>
+                    {% if request.request_type == 'new' %}
+                    <a href="#" class="text-primary me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#viewRequestModal{{ request.id }}">
+                      عرض
+                    </a> | 
+                      <a href="#" class="custom-link text-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ request.id }}">{% trans "إلغاء الطلب" %}</a>
+                    {% else %}
+                    <a href="#" class="text-primary me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#viewRequestModal{{ request.id }}">
+                      عرض
+                    </a> | 
+                      <span class="text-muted">{% trans "لا يمكن الإلغاء" %}</span>
+                    {% endif %}
                   </td>
                 </tr>
                 {% endif %}
-                {% empty %}
-                <tr>
-                  <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
-                </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
           {% else %}
-          <p>لم تقم بأية طلبات بعد.</p>
+          <p>{% trans "لم تقم بأية طلبات بعد." %}</p>
           {% endif %}
         </div>
       </div>
@@ -112,7 +127,7 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="deniedHeading">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#deniedOrders" aria-expanded="false" aria-controls="deniedOrders">
-          <i class="bi bi-dash-square me-2 text-danger"></i> الطلبات المرفوضة
+          <i class="bi bi-dash-square me-2 text-danger"></i> {% trans "الطلبات المرفوضة" %}
         </button>
       </h2>
       <div id="deniedOrders" class="accordion-collapse collapse" aria-labelledby="deniedHeading" data-bs-parent="#ordersAccordion">
@@ -122,38 +137,92 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th>المنتج</th>
-                  <th>الكمية</th>
-                  <th>تاريخ الطلب</th>
-                  <th>الحالة</th>
+                  <th>{% trans "المنتج" %}</th>
+                  <th>{% trans "الكمية" %}</th>
+                  <th>{% trans "تاريخ الطلب" %}</th>
+                  <th>{% trans "الحالة" %}</th>
+                  <th>{% trans "إجراء" %}</th>
                 </tr>
               </thead>
               <tbody>
                 {% for request in user_requests %}
                 {% if request.status == "denied" %}
                 <tr>
-                  <td>{{ request.product.الاسم }}</td>
+                  <td>{{ request.product.name }} {{ request.product.manufacturer }} {{ request.product.model }} {{ request.product.serial_number }} </td>
                   <td>{{ request.quantity }}</td>
                   <td>{{ request.request_date|date:"Y-m-d" }}</td>
-                  <td><span class="badge rounded-pill bg-danger px-3 py-2 text-white">مرفوض</span></td>
+                  <td>
+                    <span class="badge rounded-pill bg-danger px-3 py-2 text-white">{% trans "مرفوض" %}</span>
+                    <td>
+                    <a href="#" class="text-primary me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#viewRequestModal{{ request.id }}">
+                      عرض
+                    </a>
+                  </td>
                 </tr>
                 {% endif %}
-                {% empty %}
-                <tr>
-                  <td colspan="5">لا توجد طلبات في هذه الفئة.</td>
-                </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
           {% else %}
-          <p>لم تقم بأية طلبات بعد.</p>
+          <p>{% trans "لم تقم بأية طلبات بعد." %}</p>
           {% endif %}
         </div>
       </div>
     </div>
-  </div>
+
+
+    <hr>
+    <p class="lead">سيتم التواصل معك في اسرع وقت لتسليم المعدات والاجهزة</p>
+    <hr>
+    <!-- Returned Orders Section -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="returnedHeading">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#returnedOrders" aria-expanded="true" aria-controls="returnedOrders">
+          <i class="bi bi-boxes me-2 text-success"></i> {% trans "الطلبات المرجعة" %}
+        </button>
+      </h2>
+      <div id="returnedOrders" class="accordion-collapse collapse show" aria-labelledby="returnedHeading" data-bs-parent="#ordersAccordion">
+        <div class="accordion-body">
+          {% if user_requests.exists %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>{% trans "المنتج" %}</th>
+                  <th>{% trans "الكمية" %}</th>
+                  <th>{% trans "تاريخ الطلب" %}</th>
+                  <th>{% trans "إجراء" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for request in user_requests %}
+                {% if request.status == "returned" %}
+                <tr>
+                  <td>{{ request.product.name }} {{ request.product.manufacturer }} {{ request.product.model }} {{ request.product.serial_number }} </td>
+                  <td>{{ request.quantity }}</td>
+                  <td>{{ request.request_date|date:"Y-m-d" }}</td>
+                  <td>
+                    <a href="#" class="text-primary me-2 fs-5 link-no-underline" data-bs-toggle="modal" data-bs-target="#viewRequestModal{{ request.id }}">
+                      عرض
+                    </a>
+                  </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p>{% trans "لم تقم بأية طلبات بعد." %}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
 </div>
+</div>
+
 
 <!-- Cancel Confirmation Modal -->
 {% for request in user_requests %}
@@ -161,23 +230,86 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="cancelModalLabel">تأكيد إلغاء الطلب</h5>
+        <h5 class="modal-title" id="cancelModalLabel">{% trans "تأكيد إلغاء الطلب" %}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        هل أنت متأكد أنك تريد إلغاء هذا الطلب؟
+        {% trans "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟" %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "إلغاء" %}</button>
         <form id="cancel-form-{{ request.id }}" method="post" action="{% url 'cancel_request' request.id %}" style="display:none;">
           {% csrf_token %}
         </form>
-        <button type="button" class="btn btn-danger" onclick="document.getElementById('cancel-form-{{ request.id }}').submit();">تأكيد</button>
+        <button type="button" class="btn btn-danger" onclick="document.getElementById('cancel-form-{{ request.id }}').submit();">{% trans "تأكيد" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+<!-- Return Confirmation Modal -->
+{% for request in user_requests %}
+<div class="modal fade" id="returnModal{{ request.id }}" tabindex="-1" aria-labelledby="returnModalLabel{{ request.id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="returnModalLabel{{ request.id }}">{% trans "تأكيد طلب الإرجاع" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% trans "هل أنت متأكد أنك تريد إرجاع هذا المنتج؟ هذه العملية غير قابله للتراجع." %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "إلغاء" %}</button>
+        <form id="return-form-{{ request.id }}" method="post" action="{% url 'submit_return_request' request.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="quantity" value="{{ request.quantity }}">
+        </form>
+        <button type="button" class="btn btn-success" onclick="document.getElementById('return-form-{{ request.id }}').submit();">{% trans "تأكيد" %}</button>
       </div>
     </div>
   </div>
 </div>
 {% endfor %}
 
-{% endblock content %}
+<!-- Request details modal -->
+{% for request in user_requests %}
+<div class="modal fade" id="viewRequestModal{{ request.id }}" tabindex="-1" aria-labelledby="viewRequestModalLabel{{ request.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+          <div class="modal-header ">
+              <h5 class="modal-title" id="viewRequestModalLabel{{ request.id }}">تفاصيل المنتج</h5>
+              <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row mb-4">
+                  <div class="col-md-6">
+                      <div class="p-3 border rounded">
+                          <p><strong>القسم:</strong> {{ request.product.facility }}</p>
+                          <p><strong>الفئة:</strong> {{ request.product.category }}</p>
+                          <p><strong>المنتج:</strong> {{ request.product.name }}</p>
+                          <p><strong>الوصف:</strong> {{ request.product.description }}</p>
+                          <p><strong>الصناعة:</strong> {{ request.product.manufacturer }}</p>
+                          <p><strong>الموديل:</strong> {{ request.product.model }}</p>
+                          <p><strong>الرقم المتسلسل:</strong> {{ request.product.serial_number }}</p>
+                      </div>
+                  </div>
+                  <div class="col-md-6 d-flex justify-content-center align-items-center">
+                      {% if request.product.image %}
+                      <img src="{{ request.product.image.url }}" class="img-fluid rounded border shadow-lg" alt="{{ request.product.name }}" style="max-height: 250px; object-fit: contain;">
+                      {% else %}
+                      <p class="text-muted">لا توجد صورة متاحة</p>
+                      {% endif %}
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إغلاق</button>
+          </div>
+      </div>
+  </div>
+</div>
+{% endfor %}
 
+
+{% endblock content %}

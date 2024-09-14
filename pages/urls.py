@@ -19,5 +19,10 @@ urlpatterns = [
     path(
         "cancel_request/<int:request_id>/", views.cancel_request, name="cancel_request"
     ),
+    path(
+        "submit_return/<int:request_id>/",
+        views.submit_return_request,
+        name="submit_return_request",
+    ),
     path("manage-requests/", views.manage_requests, name="manage_requests"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

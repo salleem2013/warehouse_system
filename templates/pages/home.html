@@ -6,80 +6,145 @@
 
 {% block content %}
 
-
-<!-- Category Filter Links -->
-<div class="container mb-4 text-center">
-  <div class="nav" aria-label="Category filter">
-    <a href="{% url 'home' %}" class="btn btn {% if not current_category %}active{% endif %}">{% trans "الكل" %}</a>
-    <a href="{% url 'home' %}?category=accessory" class="btn btn {% if current_category == 'accessory' %}active{% endif %}">{% trans "ملحقات" %}</a>
-    <a href="{% url 'home' %}?category=laptop" class="btn btn {% if current_category == 'laptop' %}active{% endif %}">{% trans "لابتوبات" %}</a>
-    <a href="{% url 'home' %}?category=desktop" class="btn btn {% if current_category == 'desktop' %}active{% endif %}">{% trans "كمبيوترات مكتبية" %}</a>
-    <a href="{% url 'home' %}?category=server" class="btn btn {% if current_category == 'server' %}active{% endif %}">{% trans "سيرفرات" %}</a>
+<!-- Main container with flexbox layout -->
+<div class="container-fluid d-flex mb-4">
+  <!-- Category Filter Links (Left Side) -->
+<div class="me-4" style="width: 150px;">
+  <div class="btn-group-vertical btn-group-sm w-100" role="group" aria-label="Category filter">
+    <a href="{% url 'home' %}?facility={{ selected_facility.id }}" class="btn btn-outline-secondary {% if not selected_category %}active{% endif %} mb-2">{% trans "الكل" %}</a>
+    {% for category in categories %}
+    <a href="{% url 'home' %}?facility={{ selected_facility.id }}&category={{ category.id }}" class="btn btn-outline-secondary {% if selected_category and selected_category.id == category.id %}active{% endif %} mb-2">
+      {{ category.name }}
+    </a>
+    {% endfor %}
   </div>
 </div>
 
-<!-- Product List -->
-<div class="container">
-  <div class="list-group">
-    {% for product in page_obj %}
-    <div class="list-group-item d-flex align-items-center justify-content-between p-3">
-      <div class="d-flex align-items-center">
-        <div style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
-          <img src="{{ product.الصورة.url }}" alt="{{ product.الاسم }}" class="img-fluid" style="object-fit: contain; width: 100%; height: 100%;">
+
+  <!-- Right side content -->
+  <div class="flex-grow-1">
+    <!-- Facility Filter Links -->
+<div class="mb-3">
+  <div  class="btn-group btn-group-sm justify-content-center" role="group" aria-label="Facility filter">
+    <a href="{% url 'home' %}" class="btn btn-outline-primary {% if not selected_facility %}active{% endif %}">{% trans "كل المنشآت" %}</a>
+    {% for facility in facilities %}
+    <a href="{% url 'home' %}?facility={{ facility.id }}" class="btn btn-outline-primary {% if selected_facility and selected_facility.id == facility.id %}active{% endif %}">
+      {{ facility.name }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+    <!-- Product List -->
+    <div class="list-group">
+      {% for product in page_obj %}
+      <div class="list-group-item d-flex align-items-center justify-content-between p-3">
+        <div class="d-flex align-items-center">
+          <div style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); background-color: lightgray;">
+            <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/no_image.png' %}{% endif %}" 
+            alt="{{ product.name }}" 
+            class="img-fluid" 
+            style="object-fit: contain; width: 100%; height: 100%;">
+          </div>
+          <div class="ms-3">
+            <h5 class="mb-1">{{ product.name }} - {{ product.manufacturer }}</h5>
+            <h6 class="text-muted">{% trans "الموديل" %}: {{ product.model }}</h6>
+            <p class="mb-2 text-muted">{{ product.description|truncatewords:20 }}</p>
+            
+            {% if product.stock and product.stock.quantity > 0 %}
+            <span class="badge bg-success text-white">
+              {% trans "متوفر" %}: {{ product.stock.quantity }}
+            </span>
+            {% else %}
+            <span class="badge bg-danger">
+              {% trans "غير متوفر" %}
+            </span>
+            {% endif %}
+          </div>
         </div>
-        <div class="ms-3">
-          <h5 class="mb-1">{{ product.الاسم }} - {{ product.الصناعة }}</h5>
-          <h6 class="text-muted">{% trans "الموديل" %}: {{ product.الموديل }}</h6>
-          <p class="mb-2 text-muted">{{ product.الوصف|truncatewords:20 }}</p>
-          
-          <!-- Use One-to-One relation directly -->
-          {% if product.المخزون and product.المخزون.الكمية > 0 %}
-          <span class="badge bg-success">
-            {% trans "متوفر" %}: {{ product.المخزون.الكمية }}
-          </span>
-          {% else %}
-          <span class="badge bg-danger">
-            {% trans "غير متوفر" %}
-          </span>
+        <div>
+          <button type="button" class="button-20 me-2" data-bs-toggle="modal" data-bs-target="#viewProductModal{{ product.id }}">
+            {% trans "عرض" %} <i class="bi bi-eye"></i>
+          </button>
+          {% if user.is_authenticated and not user.is_superuser %}
+          <button type="button" class="button-19" data-bs-toggle="modal" data-bs-target="#requestModal{{ product.id }}"
+                  data-facility="{{ selected_facility.id }}" data-category="{{ selected_category.id }}">
+            {% trans "طلب" %} <i class="bi bi-cart-plus"></i>
+          </button>
           {% endif %}
         </div>
       </div>
-      {% if user.is_authenticated  and not user.is_superuser%}
-      <div>
-        <button type="button" class="button-19" data-bs-toggle="modal" data-bs-target="#requestModal{{ product.id }}">
-          {% trans "طلب" %} <i class="bi bi-cart-plus"></i>
-        </button>
-      </div>
-      {% endif %}
-    </div>
-
-    <!-- Request Modal -->
-    <div class="modal fade" id="requestModal{{ product.id }}" tabindex="-1" aria-labelledby="requestModalLabel{{ product.id }}" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="requestModalLabel{{ product.id }}">{% trans "طلب المنتج" %}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form action="{% url 'submit_request' %}" method="post">
-            {% csrf_token %}
-            <div class="modal-body">
+      <!-- Request Modal -->
+      <div class="modal fade" id="requestModal{{ product.id }}" tabindex="-1" aria-labelledby="requestModalLabel{{ product.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="requestModalLabel{{ product.id }}">{% trans "طلب المنتج" %}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'submit_request' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="category" id="modalCategory{{ product.id }}" value="{{ selected_category.id }}">
+              <input type="hidden" name="facility" id="modalFacility{{ product.id }}" value="{{ selected_facility.id }}">
               <input type="hidden" name="product_id" value="{{ product.id }}">
-              <label for="quantity{{ product.id }}" class="form-label">{% trans "الكمية" %}:</label>
-              <input type="number" class="form-control text-center" id="typeNumber{{ product.id }}" name="quantity" min="1" value="1">
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-outline-success">{% trans "تأكيد الطلب" %}</button>
-            </div>
-          </form>
+              <div class="modal-body">
+                <label for="quantity{{ product.id }}" class="form-label">{% trans "الكمية" %}:</label>
+                <input type="number" class="form-control text-center" id="quantity{{ product.id }}" name="quantity" min="1" value="1">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-success">{% trans "تأكيد الطلب" %}</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
+
+      <!-- View Product Modal -->
+      <div class="modal fade" id="viewProductModal{{ product.id }}" tabindex="-1" aria-labelledby="viewProductModalLabel{{ product.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="viewProductModalLabel{{ product.id }}">تفاصيل المنتج</h5>
+              <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="p-3 border rounded">
+                    <p><strong>القسم:</strong> {{ product.facility }}</p>
+                    <p><strong>الفئة:</strong> {{ product.category }}</p>
+                    <p><strong>المنتج:</strong> {{ product.name }}</p>
+                    <p><strong>الوصف:</strong> {{ product.description }}</p>
+                    <p><strong>الصناعة:</strong> {{ product.manufacturer }}</p>
+                    <p><strong>الموديل:</strong> {{ product.model }}</p>
+                    <p><strong>الرقم المتسلسل:</strong> {{ product.serial_number }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center align-items-center">
+                  {% if product.image %}
+                  <img src="{{ product.image.url }}" class="img-fluid rounded border shadow-lg" alt="{{ product.name }}" style="max-height: 250px; object-fit: contain;">
+                  {% else %}
+                  <p class="text-muted">لا توجد صورة متاحة</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      {% empty %}
+      <div class="alert alert-warning text-center" role="alert">
+        {% trans "لا توجد أجهزة متاحة" %}. {% trans "قم بالعودة لاحقاً" %}.
+      </div>
+      {% endfor %}
     </div>
-    {% empty %}
-    <div class="alert alert-warning text-center" role="alert">
-      {% trans "لا توجد أجهزة متاحة" %}. {% trans "قم بالعودة لاحقاً" %}.
-    </div>
-    {% endfor %}
   </div>
 </div>
 
@@ -88,21 +153,47 @@
   <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-        <a class="page-link" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}">
+        <a class="page-link" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% if selected_facility %}&facility={{ selected_facility.id }}{% endif %}{% if selected_category %}&category={{ selected_category.id }}{% endif %}{% else %}#{% endif %}">
           {% trans "السابق" %}
         </a>
       </li>
       {% for num in page_obj.paginator.page_range %}
       <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-        <a class="page-link" href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}">{{ num }}</a>
+        <a class="page-link" href="?page={{ num }}{% if selected_facility %}&facility={{ selected_facility.id }}{% endif %}{% if selected_category %}&category={{ selected_category.id }}{% endif %}">{{ num }}</a>
       </li>
       {% endfor %}
       <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-        <a class="page-link" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% else %}#{% endif %}">
+        <a class="page-link" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% if selected_facility %}&facility={{ selected_facility.id }}{% endif %}{% if selected_category %}&category={{ selected_category.id }}{% endif %}{% else %}#{% endif %}">
           {% trans "التالي" %}
         </a>
       </li>
     </ul>
   </nav>
 </div>
+
 {% endblock content %}
+
+
+
+
+<!-- JavaScript to set hidden fields in modal -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Function to set hidden fields in modal
+    function setModalFields(event) {
+      var button = event.relatedTarget; // Button that triggered the modal
+      var facility = button.getAttribute('data-facility');
+      var category = button.getAttribute('data-category');
+      var modalId = button.getAttribute('data-bs-target').replace('#', '');
+
+      document.getElementById('modalFacility' + modalId).value = facility;
+      document.getElementById('modalCategory' + modalId).value = category;
+    }
+
+    // Add event listener to all modals
+    var modals = document.querySelectorAll('.modal');
+    modals.forEach(function(modal) {
+      modal.addEventListener('show.bs.modal', setModalFields);
+    });
+  });
+</script>

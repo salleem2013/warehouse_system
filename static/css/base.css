@@ -149,27 +149,95 @@ body {
   padding: 0.5em 1em;
 }
 
-
 /* CSS */
-.button-19 {
+.button-20 {
   appearance: button;
-  background-color: #c3dbce;
+  background-color: #7572ff;
   border: solid transparent;
   border-radius: 16px;
-  border-width: 0 0 4px;
+  border-width: 0 0 5px;
   box-sizing: border-box;
   color: #FFFFFF;
   cursor: pointer;
   display: inline-block;
   font-family: din-round, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: .8px;
   line-height: 20px;
   margin: 0;
   outline: none;
   overflow: visible;
-  padding: 13px 16px;
+  padding: 13px 10px;
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: filter .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.button-20:after {
+  background-clip: padding-box;
+  background-color: #495057;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 3px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button-20:main,
+.button-20:focus {
+  user-select: auto;
+}
+
+.button-20:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button-20:disabled {
+  cursor: auto;
+}
+
+.button-20:active {
+  border-width: 4px 0 0;
+  background: none;
+}
+
+.button-20+.button-19 {
+  margin-top: 5px;
+}
+
+.button-19 {
+  appearance: button;
+  background-color: #72d2ff;
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: din-round, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  line-height: 20px;
+  margin: 0;
+  outline: none;
+  overflow: visible;
+  padding: 13px 10px;
   text-align: center;
   text-transform: uppercase;
   touch-action: manipulation;
@@ -184,10 +252,10 @@ body {
 
 .button-19:after {
   background-clip: padding-box;
-  background-color: #495057;
+  background-color: #058837;
   border: solid transparent;
   border-radius: 16px;
-  border-width: 0 0 4px;
+  border-width: 0 0 3px;
   bottom: -4px;
   content: "";
   left: 0;
@@ -216,7 +284,9 @@ body {
   background: none;
 }
 
-
+.button-19+.button-19 {
+  margin-top: 5px;
+}
 
 .nav {
   display: flex;
@@ -411,3 +481,66 @@ a.text-decoration-none:hover {
   /* Match the button color */
   text-decoration: underline;
 }
+
+
+
+
+/* CSS */
+.button-30 {
+  background-color: #ebebeb;
+  border: 1px solid #edf1f5;
+  border-radius: 4px;
+  justify-content: center;
+
+  color: #343a40;
+  cursor: pointer;
+  font-family: arial, sans-serif;
+  font-size: 14px;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+
+.button-16:focus {
+  border-color: #4285f4;
+  outline: none;
+}
+
+.button-16:active {
+  border-color: #4285f4;
+  outline: none;
+}
+
+
+
+
+/* {
+  align-items: center;
+  background-color: #5a636b;
+  border-radius: 12px;
+  box-shadow: transparent 0 0 0 3px, rgba(18, 18, 18, .1) 0 6px 20px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  line-height: 1;
+  margin: 0;
+  outline: none;
+  padding: 1rem 1.2rem;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow .2s, -webkit-box-shadow .2s;
+  white-space: nowrap;
+  border: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-30:hover {
+  box-shadow: #818181 0 0 0 1px, transparent 0 0 0 0;
+} */
