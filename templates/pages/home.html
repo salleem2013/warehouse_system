@@ -21,19 +21,39 @@
 </div>
 
 
-  <!-- Right side content -->
+{% if user.facility %}
+<div class="flex-grow-1">
+  <h5>{{ user.facility.name }}</h5>
+  <br>
+  <script>
+    // Check if the current URL already contains the facility query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const facilityId = urlParams.get('facility');
+
+    // If the facility is not already in the URL, redirect to include it
+    if (facilityId !== "{{ user.facility.id }}") {
+      window.location.href = "{% url 'home' %}?facility={{ user.facility.id }}";
+    }
+  </script>
+{% else %}
+  <!-- Facility filter links (this will only show if no facility is selected in the profile) -->
   <div class="flex-grow-1">
-    <!-- Facility Filter Links -->
-<div class="mb-3">
-  <div  class="btn-group btn-group-sm justify-content-center" role="group" aria-label="Facility filter">
-    <a href="{% url 'home' %}" class="btn btn-outline-primary {% if not selected_facility %}active{% endif %}">{% trans "كل المنشآت" %}</a>
-    {% for facility in facilities %}
-    <a href="{% url 'home' %}?facility={{ facility.id }}" class="btn btn-outline-primary {% if selected_facility and selected_facility.id == facility.id %}active{% endif %}">
-      {{ facility.name }}
-    </a>
-    {% endfor %}
+    <div class="mb-3">
+      <div class="btn-group btn-group-sm justify-content-center" role="group" aria-label="Facility filter">
+        <a href="{% url 'home' %}" class="btn btn-outline-primary {% if not selected_facility %}active{% endif %}">{% trans "كل المنشآت" %}</a>
+        {% for facility in facilities %}
+        <a href="{% url 'home' %}?facility={{ facility.id }}" class="btn btn-outline-primary {% if selected_facility and selected_facility.id == facility.id %}active{% endif %}">
+          {{ facility.name }}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
   </div>
-</div>
+{% endif %}
+
+
+
+
 
     <!-- Product List -->
     <div class="list-group">
