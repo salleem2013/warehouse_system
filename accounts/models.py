@@ -7,7 +7,7 @@ from devices.models import Facility
 
 class CustomUser(AbstractUser):
     facility = models.OneToOneField(
-        Facility, on_delete=models.SET_NULL, null=True, verbose_name=_("Facility")
+        Facility, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_("Facility")
     )
 
     def __str__(self):

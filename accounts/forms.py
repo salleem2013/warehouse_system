@@ -42,5 +42,5 @@ class CustomUserProfileForm(forms.ModelForm):
             "email": forms.EmailInput(
                 attrs={"class": "form-control", "placeholder": "البريد الإلكتروني"}
             ),
-            "facility": forms.Select(attrs={"class": "form-control"}),
+            "facility": forms.Select(attrs={"class": "form-control", "required": False}),
         }
