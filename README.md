@@ -9,7 +9,7 @@ $ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # ثانياً: تفعيل البيئة الافتراضية
 $ .venv\Scripts\Activate.ps1
-
+ 
 # تفعيل البيئة الافتراضية في نظام ماك ولينكس
 $ source .venv/bin/activate
 
